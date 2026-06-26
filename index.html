@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sonic 1.6 | الذكاء الخارق</title>
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;600;700&family=Inter:wght@400;600;700;800&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #12121a; --card: #1a1a2e;
+            --primary: #a855f7; --primary-glow: rgba(168, 85, 247, 0.4);
+            --secondary: #6366f1; --accent: #22d3ee; --gold: #facc15;
+            --danger: #ef4444; --text: #f8fafc; --text-dim: #94a3b8;
+            --glass-bg: rgba(18, 18, 26, 0.75); --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-strong: rgba(255, 255, 255, 0.12);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Tajawal',sans-serif;background:#0a0a0f;color:var(--text);height:100dvh;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+        .app{display:none;width:100%;max-width:500px;height:100dvh;margin:0 auto;flex-direction:column;background:transparent;position:relative;overflow:hidden;box-shadow:0 0 50px rgba(168,85,247,0.15);border-radius:24px;border:1px solid var(--glass-border);}
+        .app.active{display:flex;}
+        .header{display:flex;align-items:center;padding:14px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);gap:12px;flex-shrink:0;flex-wrap:wrap;border-radius:24px 24px 0 0;}
+        .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 25px var(--primary-glow);animation:logoGlow 2s infinite alternate;}
+        @keyframes logoGlow{0%{box-shadow:0 0 15px rgba(168,85,247,0.6);}100%{box-shadow:0 0 35px rgba(99,102,241,0.8),0 0 70px rgba(34,211,238,0.4);}}
+        .bolt{width:18px;height:22px;background:white;clip-path:polygon(50% 0%,0% 100%,40% 60%,10% 100%,100% 40%,60% 60%,90% 0%);animation:boltPulse 0.8s infinite alternate;}
+        @keyframes boltPulse{0%{filter:drop-shadow(0 0 2px #fff);}100%{filter:drop-shadow(0 0 10px #facc15);}}
+        .header-info span{font-weight:700;font-family:'El Messiri',sans-serif;font-size:1rem;letter-spacing:0.5px;background:linear-gradient(to right,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .balance-card{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:30px;background:var(--card);border:1px solid var(--glass-border-strong);font-weight:700;font-size:0.8rem;cursor:pointer;transition:all 0.3s;white-space:nowrap;box-shadow:0 4px 15px rgba(0,0,0,0.4);}
+        .balance-card:hover{border-color:var(--gold);box-shadow:0 0 30px rgba(250,204,21,0.3);}
+        .balance-card i{color:var(--gold);font-size:14px;}
+        .balance-amount{font-family:'Inter',sans-serif;font-feature-settings:'tnum';font-variant-numeric:tabular-nums;}
+        .menu-icon{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);font-size:16px;transition:0.2s;flex-shrink:0;}
+        .menu-icon:hover{background:var(--primary);color:#050816;}
+        .content{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;background:rgba(10,10,15,0.3);}
+        .msg{margin-bottom:18px;animation:slideIn 0.3s ease;}
+        @keyframes slideIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        .msg.user{text-align:left;}
+        .msg.user .bubble{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:12px 16px;border-radius:20px 20px 4px 20px;display:inline-block;max-width:80%;box-shadow:0 8px 25px rgba(168,85,247,0.3);}
+        .msg.ai{text-align:right;}
+        .msg.ai .bubble{background:var(--card);border:1px solid var(--glass-border-strong);padding:12px 16px;border-radius:20px 20px 20px 4px;display:inline-block;max-width:80%;line-height:1.7;}
+        .input-area{padding:12px 20px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));background:var(--glass-bg);backdrop-filter:blur(25px);border-top:1px solid var(--glass-border);display:flex;gap:10px;flex-shrink:0;border-radius:0 0 24px 24px;}
+        .input-area input{flex:1;background:var(--card);border:1px solid var(--glass-border-strong);border-radius:24px;padding:12px 18px;color:var(--text);font-size:0.95rem;outline:none;transition:0.2s;}
+        .input-area input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+        .send-btn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));border:none;color:#050816;font-size:1.2rem;cursor:pointer;transition:0.2s;flex-shrink:0;box-shadow:0 4px 15px var(--primary-glow);}
+        .send-btn:active{transform:scale(0.9);}
+        .quick-actions{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+        .quick-btn{padding:10px 14px;border-radius:16px;background:var(--card);border:1px solid var(--glass-border);color:var(--text-dim);cursor:pointer;font-size:0.8rem;transition:0.2s;white-space:nowrap;}
+        .quick-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(168,85,247,0.08);box-shadow:0 0 15px rgba(168,85,247,0.2);}
+        .quick-btn i{margin-left:4px;}
+        .sidebar{position:fixed;top:0;right:0;width:280px;height:100%;background:rgba(18,18,26,0.9);border-left:1px solid var(--glass-border-strong);z-index:100;transform:translateX(100%);transition:0.3s cubic-bezier(0.4,0,0.2,1);padding:24px 20px;display:flex;flex-direction:column;gap:6px;backdrop-filter:blur(30px);}
+        .sidebar.open{transform:translateX(0);}
+        .sidebar-item{padding:14px;border-radius:14px;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:12px;font-size:0.95rem;transition:0.2s;}
+        .sidebar-item:hover{background:rgba(168,85,247,0.15);color:var(--primary);}
+        .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99;display:none;}
+        .overlay.show{display:block;}
+        .modal{position:fixed;bottom:0;left:0;right:0;background:rgba(18,18,26,0.95);border-radius:24px 24px 0 0;padding:24px;z-index:200;transform:translateY(100%);transition:0.3s cubic-bezier(0.4,0,0.2,1);max-height:80dvh;overflow-y:auto;backdrop-filter:blur(30px);border-top:1px solid var(--glass-border-strong);}
+        .modal.show{transform:translateY(0);}
+        .modal h2{font-family:'El Messiri',sans-serif;margin-bottom:20px;color:var(--text);}
+        .modal input{width:100%;padding:14px;background:var(--card);border:1px solid var(--glass-border-strong);border-radius:14px;color:var(--text);margin-bottom:10px;font-size:0.95rem;}
+        .modal button{width:100%;padding:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:14px;font-weight:700;cursor:pointer;color:white;margin-top:12px;transition:all 0.2s;box-shadow:0 4px 20px var(--primary-glow);}
+        .card{background:var(--card);border:1px solid var(--glass-border);border-radius:16px;padding:16px;margin-bottom:10px;}
+        .btn{background:linear-gradient(135deg,var(--primary),var(--accent));color:white;border:none;padding:10px 18px;border-radius:12px;font-weight:700;cursor:pointer;font-size:0.85rem;}
+        .welcome-hero{text-align:center;padding:40px 0;}
+        .welcome-hero h1{font-family:'El Messiri',sans-serif;font-size:2.5rem;background:linear-gradient(135deg,var(--primary),var(--accent),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .help-list{display:flex;flex-direction:column;gap:12px;}
+        .help-item{background:var(--card);border:1px solid var(--glass-border);border-radius:16px;padding:18px;}
+        .help-item h3{color:var(--primary);margin-bottom:8px;font-size:1.1rem;}
+        .help-item p{color:var(--text-dim);font-size:0.9rem;line-height:1.6;}
+        .site-stopped-banner{border-radius:14px;padding:14px;margin-bottom:18px;text-align:center;font-weight:600;}
+        .site-stopped-banner.danger{background:rgba(239,68,68,0.15);border:1px solid var(--danger);color:var(--danger);}
+        .site-stopped-banner.warning{background:rgba(250,204,21,0.15);border:1px solid var(--gold);color:var(--gold);}
+        .admin-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--glass-border);}
+        .admin-section h4{color:var(--gold);margin-bottom:12px;}
+        .hidden{display:none;}
+        .typing-cursor::after{content:'|';display:inline-block;animation:blink 1s infinite;color:var(--accent);font-weight:bold;margin-right:2px;}
+        @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+        .thinking-dots{display:flex;gap:8px;justify-content:flex-end;padding:10px 0;}
+        .thinking-dots span{width:10px;height:10px;border-radius:50%;background:var(--primary);animation:bounce 1.4s infinite ease-in-out both;}
+        .thinking-dots span:nth-child(1){animation-delay:-0.32s;}
+        .thinking-dots span:nth-child(2){animation-delay:-0.16s;}
+        @keyframes bounce{0%,80%,100%{transform:scale(0.6);opacity:0.4;background:var(--primary);}40%{transform:scale(1.3);opacity:1;background:var(--accent);}}
+        .msg.ai .bubble.writing{animation:glowPulse 1.5s ease-in-out infinite;border-color:rgba(168,85,247,0.5);}
+        @keyframes glowPulse{0%,100%{box-shadow:0 0 12px rgba(168,85,247,0.25);}50%{box-shadow:0 0 28px rgba(168,85,247,0.6),0 0 45px rgba(34,211,238,0.25);}}
+        .news-item{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid var(--glass-border);transition:all 0.2s;cursor:pointer;}
+        .news-item:hover{border-color:var(--primary);background:rgba(168,85,247,0.08);}
+        .news-item h4{font-size:1rem;margin-bottom:6px;color:var(--text);}
+        .news-item p{font-size:0.8rem;color:var(--text-dim);}
+        .chat-list-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--glass-border);cursor:pointer;transition:0.2s;}
+        .chat-list-item:hover{border-color:var(--primary);background:rgba(168,85,247,0.08);}
+        .chat-list-item .title{font-weight:600;flex:1;}
+        .chat-list-item .date{font-size:0.75rem;color:var(--text-dim);margin:0 12px;}
+        .chat-list-item .actions i{color:var(--danger);cursor:pointer;font-size:14px;}
+        .verified-badge{color:#1E90FF;font-size:1rem;margin-right:6px;display:none;}
+    </style>
+</head>
+<body>
+<div class="app" id="mainApp">
+    <div class="header">
+        <div class="logo"><div class="bolt"></div></div>
+        <div class="header-info"><span>Sonic 1.6</span></div>
+        <div class="balance-card" id="balanceCard"><i class="fas fa-credit-card"></i><span class="balance-amount" id="headerPointsValue">0</span></div>
+        <div class="menu-icon" id="toggleSidebar"><i class="fas fa-bars"></i></div>
+    </div>
+    <div class="content" id="contentArea">
+        <div class="site-stopped-banner hidden" id="siteStoppedBanner"></div>
+        <div class="welcome-hero" id="welcomeBox"><h1>Sonic AI</h1><p style="color:#94a3b8;margin:8px 0 18px;">اسألني أي شيء بالعربية ⚡</p>
+            <div class="quick-actions">
+                <div class="quick-btn" id="quickCode"><i class="fas fa-code"></i> كود HTML</div>
+                <div class="quick-btn" id="quickExplain"><i class="fas fa-brain"></i> شرح الذكاء</div>
+                <div class="quick-btn" id="quickNews"><i class="fas fa-globe"></i> آخر الأخبار</div>
+                <div class="quick-btn" id="quickWorldCup"><i class="fas fa-trophy"></i> كأس العالم</div>
+            </div>
+        </div>
+        <div id="aiMessages"></div>
+    </div>
+    <div class="input-area" id="inputArea">
+        <input type="text" id="userInput" placeholder="اكتب سؤالك هنا...">
+        <button class="send-btn" id="sendBtn"><i class="fas fa-arrow-up"></i></button>
+    </div>
+</div>
+
+<div class="overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebarPanel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h3 style="font-family:'El Messiri',sans-serif;">القائمة</h3>
+        <div class="menu-icon" id="closeSidebar"><i class="fas fa-times"></i></div>
+    </div>
+    <div class="sidebar-item" id="sidebarNewChat"><i class="fas fa-plus"></i> محادثة جديدة</div>
+    <div class="sidebar-item" id="sidebarChats"><i class="fas fa-comments"></i> المحادثات</div>
+    <div class="sidebar-item" id="sidebarGift"><i class="fas fa-gift"></i> المكافآت</div>
+    <div class="sidebar-item" id="sidebarTransfer"><i class="fas fa-paper-plane"></i> إرسال نقاط</div>
+    <div class="sidebar-item" id="sidebarNews"><i class="fas fa-newspaper"></i> أخبار</div>
+    <div class="sidebar-item" id="sidebarWorldCup"><i class="fas fa-trophy"></i> كأس العالم</div>
+    <div class="sidebar-item" id="sidebarHelp"><i class="fas fa-question-circle"></i> حل المشاكل</div>
+    <div class="sidebar-item" id="sidebarSettings"><i class="fas fa-cog"></i> الإعدادات</div>
+    <div class="sidebar-item" id="sidebarAdmin" style="display:none;"><i class="fas fa-shield"></i> لوحة الأدمن</div>
+    <div class="sidebar-item" id="sidebarLogout" style="color:#FF4D4D;"><i class="fas fa-sign-out-alt"></i> خروج</div>
+</div>
+
+<div class="modal" id="registerModal"><h2>إنشاء حساب</h2><input id="firstNameInput" placeholder="الاسم الأول"><input id="lastNameInput" placeholder="الاسم الأخير"><button id="registerBtn">تسجيل</button><p id="registerError" style="color:#FF4D4D;margin-top:8px;"></p></div>
+<div class="modal" id="welcomeModal">
+    <div style="text-align:center;">
+        <div class="logo" style="width:60px;height:60px;margin:0 auto 16px;"><div class="bolt"></div></div>
+        <h2 style="font-size:1.8rem;margin-bottom:8px;">🚀 مرحباً بك في Sonic 1.6</h2>
+        <p style="color:var(--text-dim);margin-bottom:24px;">الإصدار الأذكى والأسرع على الإطلاق</p>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-radius:16px;border:1px solid var(--glass-border-strong);"><i class="fas fa-bolt" style="color:var(--accent);"></i><span>سرعة استجابة فائقة تصل إلى 0.8 ثانية</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-radius:16px;border:1px solid var(--glass-border-strong);"><i class="fas fa-brain" style="color:var(--accent);"></i><span>ذكاء محسّن يفهم لهجتك وأسلوبك</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-radius:16px;border:1px solid var(--glass-border-strong);"><i class="fas fa-piggy-bank" style="color:var(--accent);"></i><span>استهلاك رصيد أقل (5 نقاط فقط لكل رسالة)</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-radius:16px;border:1px solid var(--glass-border-strong);"><i class="fas fa-shield-alt" style="color:var(--accent);"></i><span>أمان محسّن وخصوصية تامة</span></div>
+        </div>
+        <button id="understandBtn" style="margin-top:24px;">فهمت، انطلق!</button>
+    </div>
+</div>
+<div class="modal" id="chatListModal">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><h2>📋 المحادثات</h2><div class="menu-icon" id="closeChatListModal"><i class="fas fa-times"></i></div></div>
+    <div id="chatListContainer"></div>
+</div>
+<div class="modal" id="giftModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>🎁 المكافآت</h2><div class="menu-icon" id="closeGiftModal"><i class="fas fa-times"></i></div></div><div style="background:rgba(30,144,255,0.06);padding:14px;border-radius:14px;margin-bottom:12px;text-align:center;"><p>200 نقطة ترحيبية</p><button class="btn" id="claimGiftBtn" style="width:auto;margin-top:8px;">استلام</button></div><input id="giftCodeInput" placeholder="كود الهدية"><button id="redeemGiftBtn">تفعيل</button><p id="giftError" style="color:#FF4D4D;margin-top:8px;"></p></div>
+<div class="modal" id="newsModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2 id="newsModalTitle">أخبار</h2><div class="menu-icon" id="closeNewsModal"><i class="fas fa-times"></i></div></div><div id="newsContent">جاري التحميل...</div></div>
+<div class="modal" id="helpModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>🛠️ حل المشاكل</h2><div class="menu-icon" id="closeHelpModal"><i class="fas fa-times"></i></div></div><div class="help-list" id="helpList"></div></div>
+<div class="modal" id="settingsModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>الإعدادات</h2><div class="menu-icon" id="closeSettingsModal"><i class="fas fa-times"></i></div></div><button id="settingsProfileBtn">الملف الشخصي</button><button id="settingsExportBtn">تصدير المحادثة</button><button id="settingsImportBtn">استيراد</button><p style="text-align:center;margin-top:12px;">النقاط: <span id="settingsPointsValue">0</span></p></div>
+<div class="modal" id="adminDashboardModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>لوحة التحكم</h2><div class="menu-icon" id="closeAdminDashboard"><i class="fas fa-times"></i></div></div>
+    <label>رصيدي الحالي</label><input type="number" id="adminPointsInput"><button id="adminUpdatePointsBtn">تحديث رصيدي</button>
+    <div class="admin-section"><h4>🌐 التحكم بالموقع</h4><button id="adminToggleSiteBtn">إيقاف الموقع للكل</button></div>
+    <div class="admin-section"><h4>💰 إدارة نقاط المستخدمين</h4><input type="text" id="adminTargetUserId" placeholder="معرف المستخدم (5 أرقام)"><input type="number" id="adminTargetAmount" placeholder="عدد النقاط"><div style="display:flex;gap:8px;margin-top:8px;"><button id="adminAddPointsBtn" style="flex:1;background:#00D9A6;">➕ إضافة</button><button id="adminDeductPointsBtn" style="flex:1;background:#FF4D4D;">➖ خصم</button></div></div>
+    <div class="admin-section"><h4>🎁 أكواد الهدايا</h4><div id="adminCodesContainer"></div></div>
+</div>
+<div class="modal" id="profileModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>الملف الشخصي</h2><div class="menu-icon" id="closeProfileModal"><i class="fas fa-times"></i></div></div><div style="text-align:center;"><div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;">⚡</div><p id="profileFullName" style="font-weight:600;margin-top:8px;"></p><p id="profileUserId" style="color:#B8C0D4;font-size:0.85rem;"></p></div><div class="card" style="display:flex;justify-content:space-between;"><span>تاريخ التسجيل:</span><span id="profileRegDate"></span></div><div class="card" style="display:flex;justify-content:space-between;"><span>آخر نشاط:</span><span id="profileLastActive"></span></div><div class="card" style="display:flex;justify-content:space-between;"><span>النقاط:</span><span id="profilePoints"></span></div><div class="card" style="display:flex;justify-content:space-between;"><span>المنفقة:</span><span id="profileSpent"></span></div></div>
+<div class="modal" id="transferModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>📤 إرسال نقاط</h2><div class="menu-icon" id="closeTransferBtn"><i class="fas fa-times"></i></div></div><input id="recipientIdInput" placeholder="معرف المستلم (5 أرقام)"><input id="transferAmount" type="number" placeholder="عدد النقاط"><button id="sendTransferBtn">تأكيد</button><p id="transferError" style="color:#FF4D4D;margin-top:8px;"></p></div>
+<input type="file" id="importFileInput" accept=".json" style="display:none;">
+
+<script>
+(function() {
+    const GROQ_KEY = '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';
+    const GROQ_MODEL = 'llama-3.3-70b-versatile';
+    const SYSTEM_PROMPT = 'أنت تتحدث باللغة العربية فقط. لا تستخدم أي لغة أخرى مهما حدث. كل ردودك يجب أن تكون بالعربية حصراً. إذا كتب المستخدم بلغة أخرى، أجب بالعربية.';
+    const ADMIN_PASS = 'adham777';
+    const GIFTS = { 'KR7X-92PL-QW8M':100,'YT5N-X8K4-7PZR':250,'A9MV-3QTX-LK72':500,'J4WP-ZN8C-5RXT':750,'H2KF-7MQL-X9VP':1000,'RX8T-C4ZN-P7KM':1500,'VQ3L-9XWT-MK8R':2000,'N7PK-RX4M-ZQ2T':3000,'LX9V-K7QT-4MPR':5000,'ZT8R-XM5Q-KP9W':10000 };
+    const HELP_ITEMS = [
+        {title:'الذكاء الاصطناعي لا يرد',text:'تأكد من اتصالك بالإنترنت. إذا استمرت المشكلة، امسح بيانات المتصفح أو جرب متصفحاً آخر.'},
+        {title:'الرصيد لا يزيد',text:'بعد الشحن عبر PayPal، يجب أن يزيد الرصيد تلقائياً. إذا لم يحدث، تواصل مع الدعم.'},
+        {title:'الأخبار لا تظهر',text:'قد يكون هناك حظر من مزود الخدمة. جرب استخدام VPN أو انتظر قليلاً ثم حاول مجدداً.'},
+        {title:'إرسال النقاط فشل',text:'تأكد من أن معرف المستلم صحيح (5 أرقام). تأكد من اتصالك بالإنترنت وأن MQTT يعمل.'}
+    ];
+
+    const UKEY='sonic_user', AI_CHATS_KEY='sonic_ai_chats', LAST_AI_KEY='sonic_last_ai_chat';
+    let user=null,chats={},aiChatId=null;
+    let mqttClient=null;
+    let isAdminLoggedIn = false;
+    let siteStoppedGlobal = false;
+
+    const $=id=>document.getElementById(id);
+    const app=$('mainApp'),rm=$('registerModal');
+    const hpv=$('headerPointsValue'),aiMessages=$('aiMessages'),wb=$('welcomeBox');
+    const sidebar=$('sidebarPanel'),sOverlay=$('sidebarOverlay');
+
+    function formatPoints(p){ return p.toLocaleString('en-US'); }
+    function updateUI(){
+        if(!user)return;
+        hpv.textContent = formatPoints(user.points);
+        $('settingsPointsValue').textContent = formatPoints(user.points);
+    }
+    function saveUser(){if(user)localStorage.setItem(UKEY,JSON.stringify(user));}
+    function loadUser(){const s=localStorage.getItem(UKEY);if(s)try{user=JSON.parse(s);}catch(e){user=null;}}
+
+    // تحديث رؤية عناصر الأدمن
+    function updateAdminUI(){
+        if(!user) return;
+        const isAdmin = (user.id === '10001');
+        $('sidebarAdmin').style.display = isAdmin ? 'flex' : 'none';
+    }
+
+    function updateSiteBanner() {
+        const banner = $('siteStoppedBanner');
+        const inputArea = $('inputArea');
+        const sendBtn = $('sendBtn');
+        banner.classList.remove('hidden', 'danger', 'warning');
+        if (siteStoppedGlobal) {
+            if (user && user.id === '10001') {
+                banner.className = 'site-stopped-banner warning';
+                banner.textContent = '⚠️ الموقع متوقف حالياً (أنت أدمن - الخدمة متاحة لك)';
+                inputArea.style.opacity = '1';
+                sendBtn.disabled = false;
+            } else {
+                banner.className = 'site-stopped-banner danger';
+                banner.textContent = '🚫 الموقع متوقف حالياً من قبل الإدارة';
+                inputArea.style.opacity = '0.4';
+                sendBtn.disabled = true;
+            }
+        } else {
+            banner.classList.add('hidden');
+            inputArea.style.opacity = '1';
+            sendBtn.disabled = false;
+        }
+    }
+
+    function setupAdminToggleButton() {
+        const btn = $('adminToggleSiteBtn');
+        if (!btn) return;
+        function updateButtonLabel() {
+            if (siteStoppedGlobal) {
+                btn.textContent = 'تشغيل الموقع للكل';
+                btn.style.background = '#00D9A6';
+                btn.style.color = '#050816';
+            } else {
+                btn.textContent = 'إيقاف الموقع للكل';
+                btn.style.background = '#FF4D4D';
+                btn.style.color = '#fff';
+            }
+        }
+        updateButtonLabel();
+        btn.onclick = () => {
+            const action = siteStoppedGlobal ? 'start' : 'stop';
+            if (mqttClient && mqttClient.connected) {
+                mqttClient.publish('sonic15/admin/stop', JSON.stringify({ action }));
+            }
+        };
+    }
+
+    function connectMQTT(uid){
+        if(mqttClient) mqttClient.end();
+        mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+            clientId: 'sonic_'+uid+'_'+Math.random().toString(16).substr(2,8),
+            clean:true,
+            reconnectPeriod:5000
+        });
+        mqttClient.on('connect', ()=>{
+            mqttClient.subscribe('sonic15/transfer/'+uid);
+            mqttClient.subscribe('sonic15/admin/stop');
+            mqttClient.subscribe('sonic15/admin/add/'+uid);
+            mqttClient.subscribe('sonic15/admin/deduct/'+uid);
+        });
+        mqttClient.on('message', (topic, message)=>{
+            try{
+                const data = JSON.parse(message.toString());
+                if(topic.startsWith('sonic15/transfer/')){
+                    user.points += data.amount; saveUser(); updateUI();
+                    alert(`🎉 استلمت ${data.amount} نقطة من ${data.from}`);
+                } else if(topic === 'sonic15/admin/stop'){
+                    siteStoppedGlobal = data.action === 'stop';
+                    updateSiteBanner();
+                    setupAdminToggleButton();
+                } else if(topic.startsWith('sonic15/admin/add/')){
+                    user.points += data.amount; saveUser(); updateUI();
+                    alert(`🎉 أضاف الأدمن ${data.amount} نقطة إلى رصيدك`);
+                } else if(topic.startsWith('sonic15/admin/deduct/')){
+                    user.points = Math.max(0, user.points - data.amount);
+                    saveUser(); updateUI();
+                    alert(`⚠️ خصم الأدمن ${data.amount} نقطة من رصيدك`);
+                }
+            }catch(e){}
+        });
+    }
+
+    function loadAIChats(){
+        const saved = localStorage.getItem(AI_CHATS_KEY);
+        chats = saved ? JSON.parse(saved) : {};
+        if(!Object.keys(chats).length) newAIChat();
+        else {
+            aiChatId = localStorage.getItem(LAST_AI_KEY) || Object.keys(chats)[0];
+            if(!chats[aiChatId]) newAIChat();
+            else renderAIChat();
+        }
+    }
+    function newAIChat(){
+        const id = Date.now().toString();
+        chats[id] = {
+            title:'محادثة',
+            messages:[{role:'assistant',content:'أهلاً بيك! ⚡ أنا Sonic 1.6، مساعدك الذكي. اسألني أي حاجة بالعربي.'}],
+            createdAt: new Date().toISOString()
+        };
+        aiChatId = id;
+        saveAIChats();
+        renderAIChat();
+    }
+    function saveAIChats(){
+        localStorage.setItem(AI_CHATS_KEY, JSON.stringify(chats));
+        localStorage.setItem(LAST_AI_KEY, aiChatId);
+    }
+    function renderAIChat(){
+        aiMessages.innerHTML = '';
+        const msgs = chats[aiChatId]?.messages || [];
+        msgs.forEach(m => {
+            const div = document.createElement('div');
+            div.className = `msg ${m.role === 'user' ? 'user' : 'ai'}`;
+            div.innerHTML = `<div class="bubble">${m.content}</div>`;
+            aiMessages.appendChild(div);
+        });
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+        wb.classList.toggle('hidden', msgs.length > 1);
+    }
+
+    function openChatListModal() {
+        const container = $('chatListContainer');
+        const chatIds = Object.keys(chats);
+        if (chatIds.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-dim);">لا توجد محادثات سابقة.</p>';
+        } else {
+            container.innerHTML = chatIds.map(id => {
+                const chat = chats[id];
+                const title = chat.title || 'محادثة';
+                const date = chat.createdAt ? new Date(chat.createdAt).toLocaleString('ar-EG') : '';
+                return `
+                    <div class="chat-list-item">
+                        <div class="title" id="switch-${id}" style="cursor:pointer;">${title}</div>
+                        <div class="date">${date}</div>
+                        <div class="actions"><i class="fas fa-trash" id="delete-${id}"></i></div>
+                    </div>
+                `;
+            }).join('');
+            chatIds.forEach(id => {
+                const switchEl = document.getElementById('switch-'+id);
+                const deleteEl = document.getElementById('delete-'+id);
+                if(switchEl) switchEl.onclick = () => {
+                    if (chats[id]) {
+                        aiChatId = id;
+                        saveAIChats();
+                        renderAIChat();
+                        closeAllModals();
+                    }
+                };
+                if(deleteEl) deleteEl.onclick = (e) => {
+                    e.stopPropagation();
+                    if (confirm('هل أنت متأكد من حذف هذه المحادثة؟')) {
+                        delete chats[id];
+                        if (aiChatId === id) {
+                            const remaining = Object.keys(chats);
+                            if (remaining.length > 0) aiChatId = remaining[0];
+                            else newAIChat();
+                        }
+                        saveAIChats();
+                        renderAIChat();
+                        openChatListModal();
+                    }
+                };
+            });
+        }
+        openModal('chatListModal');
+        $('closeChatListModal').onclick = closeAllModals;
+    }
+
+    function typeWriter(element, text, speed = 25) {
+        return new Promise(resolve => {
+            let i = 0;
+            element.innerHTML = '';
+            element.classList.add('writing');
+            const cursorSpan = document.createElement('span');
+            cursorSpan.className = 'typing-cursor';
+            element.appendChild(cursorSpan);
+            function type() {
+                if (i < text.length) {
+                    element.insertBefore(document.createTextNode(text.charAt(i)), cursorSpan);
+                    i++;
+                    aiMessages.scrollTop = aiMessages.scrollHeight;
+                    setTimeout(type, speed);
+                } else {
+                    cursorSpan.remove();
+                    element.classList.remove('writing');
+                    resolve();
+                }
+            }
+            type();
+        });
+    }
+
+    async function sendMessage(){
+        const input = $('userInput');
+        const text = input.value.trim();
+        if(!text) return;
+        if (user.points < 5) {
+            alert('⚠️ رصيدك غير كافٍ. تحتاج 5 نقاط على الأقل لإرسال رسالة.');
+            return;
+        }
+        input.value = '';
+        if(!chats[aiChatId]) newAIChat();
+        chats[aiChatId].messages.push({role:'user', content:text});
+        saveAIChats();
+        renderAIChat();
+
+        const thinkingId = 'thinking-'+Date.now();
+        const thinkDiv = document.createElement('div');
+        thinkDiv.className = 'msg ai';
+        thinkDiv.id = thinkingId;
+        thinkDiv.innerHTML = `<div class="bubble"><div class="thinking-dots"><span></span><span></span><span></span></div></div>`;
+        aiMessages.appendChild(thinkDiv);
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+
+        try {
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method:'POST',
+                headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+                body: JSON.stringify({
+                    model: GROQ_MODEL,
+                    messages: [{role:'system',content:SYSTEM_PROMPT}, ...chats[aiChatId].messages],
+                    temperature:0.7
+                })
+            });
+            const data = await response.json();
+            const reply = data.choices?.[0]?.message?.content || 'آسف، حصل خطأ.';
+            document.getElementById(thinkingId)?.remove();
+
+            user.points -= 5;
+            user.spent = (user.spent||0) + 5;
+            saveUser();
+            updateUI();
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg ai';
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'bubble';
+            msgDiv.appendChild(bubbleDiv);
+            aiMessages.appendChild(msgDiv);
+
+            await typeWriter(bubbleDiv, reply, 25);
+            chats[aiChatId].messages.push({role:'assistant',content: reply});
+            saveAIChats();
+        } catch(e) {
+            document.getElementById(thinkingId)?.remove();
+            const errorMsg = '⚠️ فشل الاتصال بالمساعد، تأكد من الإنترنت. لم يتم خصم أي نقاط.';
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg ai';
+            msgDiv.innerHTML = `<div class="bubble">${errorMsg}</div>`;
+            aiMessages.appendChild(msgDiv);
+            chats[aiChatId].messages.push({role:'assistant',content: errorMsg});
+            saveAIChats();
+        }
+    }
+
+    async function fetchNews(category = 'general') {
+        let rssUrl = category === 'worldcup' ? 'https://news.google.com/rss/search?q=كأس+العالم&hl=ar&gl=EG&ceid=EG:ar' : 'https://news.google.com/rss?hl=ar&gl=EG&ceid=EG:ar';
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+        try {
+            const res = await fetch(apiUrl);
+            const data = await res.json();
+            if (data.status === 'ok') {
+                let html = '';
+                data.items.slice(0, 12).forEach(item => {
+                    html += `<div class="news-item" onclick="window.open('${item.link}', '_blank')"><h4>${item.title}</h4><p>${item.pubDate ? new Date(item.pubDate).toLocaleDateString('ar-EG') : ''}</p></div>`;
+                });
+                $('newsContent').innerHTML = html || '<p>لا توجد أخبار.</p>';
+            } else {
+                $('newsContent').innerHTML = '<p style="color:#FF4D4D;">فشل جلب الأخبار، حاول لاحقاً.</p>';
+            }
+        } catch (e) {
+            $('newsContent').innerHTML = '<p style="color:#FF4D4D;">فشل الاتصال بخدمة الأخبار.</p>';
+        }
+    }
+
+    function openNewsModal(category='general') {
+        openModal('newsModal');
+        $('newsModalTitle').textContent = category === 'worldcup' ? '⚽ كأس العالم' : '📰 آخر الأخبار';
+        $('newsContent').innerHTML = '<p style="color:#94a3b8;">جاري تحميل الأخبار...</p>';
+        fetchNews(category);
+        $('closeNewsModal').onclick = closeAllModals;
+    }
+
+    function closeAllModals() {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('show'));
+        sOverlay.classList.remove('show');
+    }
+    function openModal(id) {
+        closeAllModals();
+        $(id).classList.add('show');
+        sOverlay.classList.add('show');
+    }
+    sOverlay.addEventListener('click', closeAllModals);
+
+    function registerUser() {
+        const first = $('firstNameInput').value.trim();
+        const last = $('lastNameInput').value.trim();
+        if(!first || !last) {
+            $('registerError').textContent = 'من فضلك أدخل الاسم الأول والأخير.';
+            return;
+        }
+        // ID ثابت للأدمن
+        const id = '10001';
+        user = {
+            id, firstName:first, lastName:last, points:100,
+            registeredAt: new Date().toISOString(), lastActive: new Date().toISOString(),
+            spent:0
+        };
+        closeAllModals();
+        openModal('welcomeModal');
+    }
+
+    $('understandBtn').onclick = function() {
+        closeAllModals();
+        saveUser();
+        updateUI();
+        updateAdminUI();
+        connectMQTT(user.id);
+        loadAIChats();
+        setupAdminToggleButton();
+        updateSiteBanner();
+        app.classList.add('active');
+    };
+
+    function openGiftModal() {
+        openModal('giftModal');
+        $('claimGiftBtn').onclick = () => {
+            if(user && user.points === 100) {
+                user.points += 200;
+                saveUser();
+                updateUI();
+                alert('✅ تم استلام 200 نقطة ترحيبية.');
+            } else alert('تم الاستلام مسبقاً أو لديك نقاط إضافية.');
+        };
+        $('redeemGiftBtn').onclick = () => {
+            const code = $('giftCodeInput').value.trim();
+            if(GIFTS[code]) {
+                user.points += GIFTS[code];
+                saveUser();
+                updateUI();
+                alert(`🎁 تمت إضافة ${GIFTS[code]} نقطة.`);
+            } else {
+                $('giftError').textContent = 'كود غير صالح.';
+            }
+        };
+        $('closeGiftModal').onclick = closeAllModals;
+    }
+
+    function openHelpModal() {
+        openModal('helpModal');
+        $('helpList').innerHTML = HELP_ITEMS.map(item => `<div class="help-item"><h3>${item.title}</h3><p>${item.text}</p></div>`).join('');
+        $('closeHelpModal').onclick = closeAllModals;
+    }
+
+    function openSettingsModal() {
+        openModal('settingsModal');
+        $('settingsProfileBtn').onclick = openProfileModal;
+        $('settingsExportBtn').onclick = () => {
+            const dataStr = JSON.stringify({user, chats, aiChatId}, null, 2);
+            const blob = new Blob([dataStr], {type:'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'sonic_backup.json'; a.click();
+            URL.revokeObjectURL(url);
+        };
+        $('settingsImportBtn').onclick = () => $('importFileInput').click();
+        $('closeSettingsModal').onclick = closeAllModals;
+    }
+
+    function openProfileModal() {
+        if(!user) return;
+        openModal('profileModal');
+        // إضافة شارة التوثيق للأدمن
+        const fullNameEl = $('profileFullName');
+        fullNameEl.innerHTML = `${user.firstName} ${user.lastName} ${user.id === '10001' ? '<span class="verified-badge" style="display:inline;"><i class="fas fa-check-circle"></i></span>' : ''}`;
+        $('profileUserId').textContent = '#' + user.id;
+        $('profileRegDate').textContent = new Date(user.registeredAt).toLocaleDateString('ar-EG');
+        $('profileLastActive').textContent = new Date(user.lastActive).toLocaleDateString('ar-EG');
+        $('profilePoints').textContent = formatPoints(user.points);
+        $('profileSpent').textContent = formatPoints(user.spent || 0);
+        $('closeProfileModal').onclick = closeAllModals;
+    }
+
+    function openTransferModal() {
+        openModal('transferModal');
+        $('sendTransferBtn').onclick = () => {
+            const recipientId = $('recipientIdInput').value.trim();
+            const amount = parseInt($('transferAmount').value);
+            if(!recipientId || recipientId.length !== 5 || isNaN(amount) || amount <= 0) {
+                $('transferError').textContent = 'بيانات غير صالحة.';
+                return;
+            }
+            if(amount > user.points) {
+                $('transferError').textContent = 'رصيدك غير كافٍ.';
+                return;
+            }
+            user.points -= amount;
+            user.spent = (user.spent||0) + amount;
+            saveUser();
+            updateUI();
+            if(mqttClient && mqttClient.connected) {
+                mqttClient.publish('sonic15/transfer/'+recipientId, JSON.stringify({amount, from: user.id}));
+                alert(`✅ تم إرسال ${amount} نقطة إلى ${recipientId}`);
+                closeAllModals();
+            } else {
+                $('transferError').textContent = 'فشل الاتصال بالشبكة، حاول لاحقاً.';
+            }
+        };
+        $('closeTransferBtn').onclick = closeAllModals;
+    }
+
+    function openAdminDashboard() {
+        if(!user || user.id !== '10001') return;
+        openModal('adminDashboardModal');
+        setupAdminToggleButton();
+        $('adminUpdatePointsBtn').onclick = () => {
+            const pts = parseInt($('adminPointsInput').value);
+            if(!isNaN(pts)) { user.points = pts; saveUser(); updateUI(); alert('تم تحديث رصيدك.'); }
+        };
+        $('adminAddPointsBtn').onclick = () => {
+            const target = $('adminTargetUserId').value.trim();
+            const amount = parseInt($('adminTargetAmount').value);
+            if(target && amount > 0 && mqttClient) {
+                mqttClient.publish('sonic15/admin/add/'+target, JSON.stringify({amount}));
+                alert(`تم إرسال ${amount} نقطة إلى ${target}`);
+            }
+        };
+        $('adminDeductPointsBtn').onclick = () => {
+            const target = $('adminTargetUserId').value.trim();
+            const amount = parseInt($('adminTargetAmount').value);
+            if(target && amount > 0 && mqttClient) {
+                mqttClient.publish('sonic15/admin/deduct/'+target, JSON.stringify({amount}));
+                alert(`تم خصم ${amount} نقطة من ${target}`);
+            }
+        };
+        $('closeAdminDashboard').onclick = closeAllModals;
+    }
+
+    // ربط الأحداث
+    $('toggleSidebar').onclick = () => { sidebar.classList.add('open'); sOverlay.classList.add('show'); };
+    $('closeSidebar').onclick = () => { sidebar.classList.remove('open'); sOverlay.classList.remove('show'); };
+    $('sidebarNewChat').onclick = () => { newAIChat(); sidebar.classList.remove('open'); sOverlay.classList.remove('show'); };
+    $('sidebarChats').onclick = () => { openChatListModal(); sidebar.classList.remove('open'); sOverlay.classList.remove('show'); };
+    $('sidebarGift').onclick = openGiftModal;
+    $('sidebarTransfer').onclick = openTransferModal;
+    $('sidebarNews').onclick = () => openNewsModal('general');
+    $('sidebarWorldCup').onclick = () => openNewsModal('worldcup');
+    $('sidebarHelp').onclick = openHelpModal;
+    $('sidebarSettings').onclick = openSettingsModal;
+    $('sidebarAdmin').onclick = () => openAdminDashboard();
+    $('sidebarLogout').onclick = () => { localStorage.removeItem(UKEY); localStorage.removeItem('sonic_admin_auth'); location.reload(); };
+
+    $('quickCode').onclick = () => { $('userInput').value = 'اكتب لي كود HTML بسيط'; sendMessage(); };
+    $('quickExplain').onclick = () => { $('userInput').value = 'اشرح لي الذكاء الاصطناعي باختصار'; sendMessage(); };
+    $('quickNews').onclick = () => openNewsModal('general');
+    $('quickWorldCup').onclick = () => openNewsModal('worldcup');
+
+    $('importFileInput').onchange = (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if(data.user) { user = data.user; saveUser(); updateUI(); updateAdminUI(); }
+                if(data.chats) { chats = data.chats; aiChatId = data.aiChatId; saveAIChats(); renderAIChat(); }
+                alert('تم استيراد البيانات بنجاح.');
+                closeAllModals();
+            } catch(ex) { alert('ملف غير صالح.'); }
+        };
+        reader.readAsText(file);
+    };
+
+    $('sendBtn').onclick = sendMessage;
+    $('userInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+
+    // تحميل أولي
+    loadUser();
+    if(!user) {
+        app.classList.remove('active');
+        openModal('registerModal');
+    } else {
+        app.classList.add('active');
+        updateUI();
+        updateAdminUI();
+        connectMQTT(user.id);
+        loadAIChats();
+        setupAdminToggleButton();
+        updateSiteBanner();
+    }
+    $('registerBtn').onclick = registerUser;
+})();
+</script>
+</body>
+</html>
