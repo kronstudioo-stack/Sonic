@@ -138,7 +138,7 @@
     <div class="sidebar-item" id="sidebarLogout" style="color:#FF4D4D;"><i class="fas fa-sign-out-alt"></i> خروج</div>
 </div>
 
-<div class="modal" id="registerModal"><h2>إنشاء حساب</h2><input id="firstNameInput" placeholder="الاسم الأول"><input id="lastNameInput" placeholder="الاسم الأخير"><button id="registerBtn">تسجيل</button><p id="registerError" style="color:#FF4D4D;margin-top:8px;"></p></div>
+<div class="modal" id="registerModal"><h2>إنشاء حساب</h2><input id="firstNameInput" placeholder="الاسم الأول"><input id="lastNameInput" placeholder="الاسم الأخير"><input type="password" id="adminPasswordField" placeholder="كلمة مرور الأدمن (اختياري)"><button id="registerBtn">تسجيل</button><p id="registerError" style="color:#FF4D4D;margin-top:8px;"></p></div>
 <div class="modal" id="welcomeModal">
     <div style="text-align:center;">
         <div class="logo" style="width:60px;height:60px;margin:0 auto 16px;"><div class="bolt"></div></div>
@@ -166,6 +166,10 @@
     <div class="admin-section"><h4>🌐 التحكم بالموقع</h4><button id="adminToggleSiteBtn">إيقاف الموقع للكل</button></div>
     <div class="admin-section"><h4>💰 إدارة نقاط المستخدمين</h4><input type="text" id="adminTargetUserId" placeholder="معرف المستخدم (5 أرقام)"><input type="number" id="adminTargetAmount" placeholder="عدد النقاط"><div style="display:flex;gap:8px;margin-top:8px;"><button id="adminAddPointsBtn" style="flex:1;background:#00D9A6;">➕ إضافة</button><button id="adminDeductPointsBtn" style="flex:1;background:#FF4D4D;">➖ خصم</button></div></div>
     <div class="admin-section"><h4>🎁 أكواد الهدايا</h4><div id="adminCodesContainer"></div></div>
+    <div class="admin-section" style="border-top:2px solid var(--danger);"><h4 style="color:var(--danger);">⚠️ منطقة خطيرة</h4>
+        <button id="resetAllBtn" style="background:#FF4D4D; color:white;">حذف جميع الحسابات وإعادة التشغيل</button>
+        <p style="color:var(--text-dim);font-size:0.75rem;margin-top:8px;">سيتم مسح جميع بيانات الموقع بالكامل والعودة إلى حالة التسجيل الأولى.</p>
+    </div>
 </div>
 <div class="modal" id="profileModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>الملف الشخصي</h2><div class="menu-icon" id="closeProfileModal"><i class="fas fa-times"></i></div></div><div style="text-align:center;"><div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;">⚡</div><p id="profileFullName" style="font-weight:600;margin-top:8px;"></p><p id="profileUserId" style="color:#B8C0D4;font-size:0.85rem;"></p></div><div class="card" style="display:flex;justify-content:space-between;"><span>تاريخ التسجيل:</span><span id="profileRegDate"></span></div><div class="card" style="display:flex;justify-content:space-between;"><span>آخر نشاط:</span><span id="profileLastActive"></span></div><div class="card" style="display:flex;justify-content:space-between;"><span>النقاط:</span><span id="profilePoints"></span></div><div class="card" style="display:flex;justify-content:space-between;"><span>المنفقة:</span><span id="profileSpent"></span></div></div>
 <div class="modal" id="transferModal"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>📤 إرسال نقاط</h2><div class="menu-icon" id="closeTransferBtn"><i class="fas fa-times"></i></div></div><input id="recipientIdInput" placeholder="معرف المستلم (5 أرقام)"><input id="transferAmount" type="number" placeholder="عدد النقاط"><button id="sendTransferBtn">تأكيد</button><p id="transferError" style="color:#FF4D4D;margin-top:8px;"></p></div>
@@ -176,7 +180,7 @@
     const GROQ_KEY = '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';
     const GROQ_MODEL = 'llama-3.3-70b-versatile';
     const SYSTEM_PROMPT = 'أنت تتحدث باللغة العربية فقط. لا تستخدم أي لغة أخرى مهما حدث. كل ردودك يجب أن تكون بالعربية حصراً. إذا كتب المستخدم بلغة أخرى، أجب بالعربية.';
-    const ADMIN_PASS = 'adham777';
+    const ADMIN_PASS = 'sonic112233'; // كلمة مرور الأدمن الجديدة
     const GIFTS = { 'KR7X-92PL-QW8M':100,'YT5N-X8K4-7PZR':250,'A9MV-3QTX-LK72':500,'J4WP-ZN8C-5RXT':750,'H2KF-7MQL-X9VP':1000,'RX8T-C4ZN-P7KM':1500,'VQ3L-9XWT-MK8R':2000,'N7PK-RX4M-ZQ2T':3000,'LX9V-K7QT-4MPR':5000,'ZT8R-XM5Q-KP9W':10000 };
     const HELP_ITEMS = [
         {title:'الذكاء الاصطناعي لا يرد',text:'تأكد من اتصالك بالإنترنت. إذا استمرت المشكلة، امسح بيانات المتصفح أو جرب متصفحاً آخر.'},
@@ -205,7 +209,6 @@
     function saveUser(){if(user)localStorage.setItem(UKEY,JSON.stringify(user));}
     function loadUser(){const s=localStorage.getItem(UKEY);if(s)try{user=JSON.parse(s);}catch(e){user=null;}}
 
-    // تحديث رؤية عناصر الأدمن
     function updateAdminUI(){
         if(!user) return;
         const isAdmin = (user.id === '10001');
@@ -507,29 +510,59 @@
     }
     sOverlay.addEventListener('click', closeAllModals);
 
+    // دالة التسجيل المعدّلة
     function registerUser() {
         const first = $('firstNameInput').value.trim();
         const last = $('lastNameInput').value.trim();
+        const passInput = $('adminPasswordField').value.trim();
+
+        // التحقق من الاسمين على الأقل
         if(!first || !last) {
             $('registerError').textContent = 'من فضلك أدخل الاسم الأول والأخير.';
             return;
         }
-        
-        // التحقق مما إذا كان الأدمن قد سجل من قبل
+
         const adminExists = localStorage.getItem('sonic_admin_exists');
         let id;
-        
-        if (!adminExists) {
-            // أول مستخدم ← الأدمن
-            id = '10001';
-            localStorage.setItem('sonic_admin_exists', '1');
+        let isAdmin = false;
+
+        // إذا حقل كلمة المرور غير فارغ
+        if (passInput !== '') {
+            // هل كلمة المرور صحيحة؟
+            if (passInput !== ADMIN_PASS) {
+                $('registerError').textContent = 'كلمة مرور الأدمن غير صحيحة.';
+                return;
+            }
+            // كلمة المرور صحيحة، لكن هل الأدمن موجود مسبقاً؟
+            if (adminExists) {
+                // الأدمن موجود بالفعل، لا يمكن تسجيل أدمن آخر، لذلك نعطي ID عشوائي كمستخدم عادي
+                // ويمكن إعلام المستخدم أنه سيسجل كمستخدم عادي
+                id = generateRandomId();
+            } else {
+                // أول أدمن
+                id = '10001';
+                isAdmin = true;
+                localStorage.setItem('sonic_admin_exists', '1');
+            }
         } else {
-            // مستخدم عادي ← ID عشوائي لا يساوي 10001
-            do {
-                id = Math.floor(10000 + Math.random() * 90000).toString();
-            } while (id === '10001');
+            // لا كلمة مرور => مستخدم عادي
+            if (adminExists) {
+                id = generateRandomId();
+            } else {
+                // لا يوجد أدمن بعد! لكن المستخدم لم يُدخل كلمة مرور، نعامله كمستخدم عادي أيضاً
+                // (يمكن أن نسمح له بأن يصبح أدمن إذا أدخل كلمة المرور لاحقاً، لكن ليس الآن)
+                id = generateRandomId();
+            }
         }
-        
+
+        function generateRandomId() {
+            let newId;
+            do {
+                newId = Math.floor(10000 + Math.random() * 90000).toString();
+            } while (newId === '10001');
+            return newId;
+        }
+
         user = {
             id,
             firstName: first,
@@ -539,7 +572,7 @@
             lastActive: new Date().toISOString(),
             spent: 0
         };
-        
+
         closeAllModals();
         openModal('welcomeModal');
     }
@@ -664,6 +697,12 @@
             if(target && amount > 0 && mqttClient) {
                 mqttClient.publish('sonic15/admin/deduct/'+target, JSON.stringify({amount}));
                 alert(`تم خصم ${amount} نقطة من ${target}`);
+            }
+        };
+        $('resetAllBtn').onclick = () => {
+            if (confirm('هل أنت متأكد؟ سيتم مسح جميع الحسابات والبيانات نهائياً والعودة إلى حالة التسجيل الأولى.')) {
+                localStorage.clear();
+                location.reload();
             }
         };
         $('closeAdminDashboard').onclick = closeAllModals;
