@@ -3,454 +3,499 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🚀 تحت الصيانة — Sonic</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Sonic Flash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script>
+        MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }, options: { ignoreHtmlClass: 'no-mathjax', processHtmlClass: 'mathjax-process' } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #000000; --surface: rgba(255,255,255,0.05);
+            --primary: #10b981; --primary-hover: #34d399; --primary-soft: rgba(16,185,129,0.15);
+            --danger: #ef4444; --danger-soft: rgba(239,68,68,0.2);
+            --gold: #f59e0b; --text: #e0e0e0; --text-dim: #a0a0a0; --text-light: #6b7280;
+            --border: rgba(255,255,255,0.08); --border-light: rgba(255,255,255,0.05);
+            --radius: 20px; --radius-sm: 14px; --transition: 0.25s ease;
         }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);height:100dvh;overflow:hidden;display:flex;justify-content:center;align-items:center}
+        .app{width:100%;max-width:520px;height:100dvh;display:flex;flex-direction:column;background:var(--bg);border-radius:var(--radius);overflow:hidden;box-shadow:0 0 0 1px var(--border-light);margin:0 auto;position:relative;z-index:1}
+        .header{display:flex;align-items:center;padding:8px 12px;background:rgba(0,0,0,0.9);backdrop-filter:blur(15px);border-bottom:1px solid var(--border-light);gap:8px;z-index:10;flex-shrink:0}
+        .header-title{font-weight:800;font-size:1rem;color:#fff;display:flex;align-items:center;gap:6px}
+        .header-title i{color:var(--primary);font-size:1rem}
+        .model-select-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--primary-soft);border:1.5px solid var(--primary);cursor:pointer;font-size:0.75rem;font-weight:700;color:var(--primary);transition:var(--transition);white-space:nowrap;flex-shrink:0}
+        .model-select-btn:hover{background:var(--primary);color:#fff}
+        .model-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+        .model-dot.l1{background:#60A5FA}.model-dot.l2{background:#34D399}.model-dot.l3{background:#A78BFA}.model-dot.l5{background:linear-gradient(135deg,#06b6d4,#10b981)}.model-dot.l4{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+        .points-btn{display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;background:var(--surface);border:1px solid var(--border);cursor:pointer;font-size:0.75rem;font-weight:600;color:var(--text);position:relative;transition:var(--transition);flex-shrink:0}
+        .points-btn:hover{border-color:var(--primary)}
+        .points-btn i{color:var(--gold);font-size:0.9rem}
+        .points-tooltip{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--text);color:#000;padding:6px 14px;border-radius:20px;font-size:0.7rem;white-space:nowrap;display:none;z-index:20;box-shadow:0 4px 12px rgba(0,0,0,0.4)}
+        .points-tooltip.show{display:block}
+        .user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--danger));display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.85rem;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,0.3);flex-shrink:0}
+        .menu-btn{width:34px;height:34px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--text-dim);transition:var(--transition);flex-shrink:0}
+        .menu-btn:hover{background:var(--danger-soft);color:var(--danger)}
 
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: #0a0a14;
-            color: #fff;
-            height: 100dvh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
+        .content{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;min-height:0;scroll-behavior:smooth}
+        .welcome-area{text-align:center;max-width:380px;width:100%;margin:auto;animation:fadeUp 0.5s ease}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .welcome-heading{font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:4px}
+        .welcome-subtitle{color:var(--text-dim);font-size:0.8rem;margin-bottom:20px}
+        .suggestion-cards{display:flex;flex-direction:column;gap:6px;width:100%}
+        .suggestion-card{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.2);text-align:right}
+        .suggestion-card:hover{border-color:var(--primary);box-shadow:0 6px 18px rgba(16,185,129,0.2);transform:translateY(-2px);background:var(--primary-soft)}
+        .suggestion-icon{width:36px;height:36px;border-radius:10px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--primary);flex-shrink:0;transition:var(--transition)}
+        .suggestion-card:hover .suggestion-icon{background:var(--primary);color:#fff}
+        .suggestion-text{font-weight:600;font-size:0.85rem;color:var(--text)}
+        .suggestion-desc{font-size:0.68rem;color:var(--text-dim)}
 
-        /* خلفية الجسيمات */
-        #particlesCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+        .msg{margin-bottom:14px;animation:msgIn 0.3s ease}
+        @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .user{text-align:left}
+        .user .bubble{background:var(--primary-soft);color:var(--text);padding:12px 16px;border-radius:14px 14px 4px 14px;max-width:85%;display:inline-block;font-size:0.9rem;line-height:1.6;box-shadow:0 1px 3px rgba(0,0,0,0.3);word-break:break-word}
+        .ai{text-align:right}
+        .ai .bubble{background:var(--surface);border:1px solid var(--border);padding:12px 16px;border-radius:14px 14px 14px 4px;max-width:85%;display:inline-block;font-size:0.9rem;line-height:1.6;color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.3);word-break:break-word;position:relative}
+        .copy-btn{position:absolute;top:6px;left:6px;background:rgba(255,255,255,0.08);border:none;color:var(--text-dim);cursor:pointer;font-size:0.8rem;opacity:0;transition:opacity 0.2s;padding:4px;border-radius:6px}
+        .ai .bubble:hover .copy-btn{opacity:1}
+        .copy-btn:hover{color:var(--primary)}
+        .typing-cursor{display:inline-block;width:3px;height:18px;background:var(--primary);margin-right:2px;vertical-align:middle;animation:blink 0.6s infinite;border-radius:2px}
+        @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
 
-        /* تأثيرات إضاءة */
-        .glow-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-        }
+        .input-area{padding:8px 12px;background:rgba(0,0,0,0.9);backdrop-filter:blur(15px);border-top:1px solid var(--border-light);display:flex;align-items:center;gap:8px;z-index:10;flex-shrink:0}
+        .input-box{display:flex;align-items:center;background:var(--surface);border-radius:var(--radius);padding:4px 4px 4px 14px;border:1.5px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:var(--transition);flex:1}
+        .input-box:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+        .input-box input{flex:1;padding:10px 0;background:transparent;border:none;outline:none;font-size:0.9rem;color:var(--text);font-family:'Cairo',sans-serif}
+        .send-btn{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#059669);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition);box-shadow:0 4px 12px rgba(16,185,129,0.3);flex-shrink:0}
+        .send-btn:hover{background:var(--danger);transform:scale(1.05);box-shadow:0 4px 16px rgba(239,68,68,0.4)}
 
-        .glow-orb.orb1 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #4f8cff, transparent);
-            top: -15%;
-            right: -10%;
-            animation: floatOrb 12s ease-in-out infinite;
-        }
+        .model-popup-overlay{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center}
+        .model-popup-overlay.show{display:flex}
+        .model-popup{background:#111;border-radius:24px;padding:24px 20px;width:92%;max-width:380px;box-shadow:0 20px 40px rgba(0,0,0,0.8);border:1px solid var(--border);max-height:80dvh;overflow-y:auto;animation:popIn 0.3s ease}
+        @keyframes popIn{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+        .model-popup h2{text-align:center;margin-bottom:20px;font-weight:700;font-size:1.1rem;color:var(--text);}
+        .model-list{display:flex;flex-direction:column;gap:6px}
+        .model-option{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;cursor:pointer;transition:all 0.2s}
+        .model-option:hover{border-color:var(--primary);background:rgba(16,185,129,0.05)}
+        .model-option.selected{border-color:var(--primary);background:rgba(16,185,129,0.1);box-shadow:0 0 0 2px rgba(16,185,129,0.2)}
+        .model-option.locked{opacity:0.5; cursor:not-allowed}
+        .model-option.locked:hover{border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.03)}
+        .model-option-info{flex:1}
+        .model-option-name{font-weight:700;font-size:0.9rem;color:var(--text);margin-bottom:2px}
+        .model-option-desc{font-size:0.7rem;color:var(--text-dim)}
+        .model-option-cost{font-size:0.75rem;font-weight:600;color:var(--primary);white-space:nowrap;margin-right:12px}
+        .model-close-btn{display:block;margin:18px auto 0;background:transparent;border:none;color:var(--text-dim);cursor:pointer;font-size:0.8rem}
+        .model-close-btn:hover{color:var(--danger)}
 
-        .glow-orb.orb2 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, #a855f7, transparent);
-            bottom: -12%;
-            left: -8%;
-            animation: floatOrb 15s ease-in-out infinite reverse;
-        }
+        /* نافذة القفل */
+        .lock-message-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+        .lock-message-overlay.show{display:flex}
+        .lock-message{background:#0a0a0a;border:1px solid #222;border-radius:24px;padding:30px;width:90%;max-width:400px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.9)}
+        .lock-message .icon{font-size:3rem;margin-bottom:16px}
+        .lock-message h2{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:12px}
+        .lock-message p{color:#aaa;font-size:0.85rem;line-height:1.6;margin-bottom:20px}
+        .lock-message .status{display:inline-block;padding:6px 16px;background:rgba(16,185,129,0.1);color:#10b981;border-radius:20px;font-size:0.8rem;font-weight:600;margin-bottom:12px}
+        .lock-message .availability{color:#666;font-size:0.75rem}
+        .lock-message button{background:transparent;border:1px solid #333;color:#fff;padding:10px 24px;border-radius:20px;cursor:pointer;margin-top:16px;transition:0.2s}
+        .lock-message button:hover{background:rgba(255,255,255,0.05)}
 
-        .glow-orb.orb3 {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, #f59e0b, transparent);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: floatOrb 18s ease-in-out infinite;
-        }
+        .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:149;display:none}
+        .overlay.show{display:block}
+        .sidebar{position:fixed;bottom:0;left:0;right:0;z-index:150;background:rgba(0,0,0,0.98);backdrop-filter:blur(20px);border-radius:var(--radius) var(--radius) 0 0;transform:translateY(100%);transition:var(--transition);padding:20px 16px;max-height:60dvh;overflow-y:auto;border:1px solid var(--border-light);box-shadow:0 -10px 30px rgba(0,0,0,0.5);max-width:520px;margin:0 auto}
+        .sidebar.open{transform:translateY(0)}
+        .sidebar h3{color:var(--text);text-align:center;margin-bottom:12px;font-size:1rem}
+        .sidebar-item{padding:12px 14px;border-radius:var(--radius-sm);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:12px;font-weight:500;transition:var(--transition);font-size:0.85rem}
+        .sidebar-item:hover{background:var(--primary-soft);color:var(--primary)}
+        .sidebar-item i{font-size:1.1rem;width:22px;text-align:center;color:var(--primary)}
+        .sidebar-item .label{flex:1}
+        .sidebar-item.danger{color:var(--danger)}.sidebar-item.danger i{color:var(--danger)}
+        .sidebar-item.danger:hover{background:var(--danger-soft);color:var(--danger)}
 
-        @keyframes floatOrb {
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(40px, -30px) scale(1.1);
-            }
-            50% {
-                transform: translate(-20px, 25px) scale(0.9);
-            }
-            75% {
-                transform: translate(-35px, -20px) scale(1.05);
-            }
-        }
-
-        /* المحتوى الرئيسي */
-        .main-container {
-            position: relative;
-            z-index: 2;
-            width: 90%;
-            max-width: 650px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 32px;
-            padding: 50px 35px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 120px rgba(79, 140, 255, 0.06);
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .icon-circle {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4f8cff, #a855f7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 28px;
-            font-size: 44px;
-            box-shadow: 0 0 50px rgba(79, 140, 255, 0.35);
-            animation: pulse 2.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%,
-            100% {
-                box-shadow: 0 0 50px rgba(79, 140, 255, 0.35);
-            }
-            50% {
-                box-shadow: 0 0 90px rgba(168, 85, 247, 0.55);
-            }
-        }
-
-        h1 {
-            font-size: 2.4rem;
-            font-weight: 800;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #ffffff, #a0c4ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
-        }
-
-        .description {
-            color: #a0a0c0;
-            font-size: 1rem;
-            line-height: 1.8;
-            margin-bottom: 28px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* الرسائل المتغيرة */
-        .rotating-message {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-            padding: 10px 24px;
-            font-size: 0.9rem;
-            color: #c0c0e0;
-            margin-bottom: 24px;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            animation: messageSwap 15s infinite;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        /* العداد */
-        .countdown {
-            display: none;
-            /* لا يظهر افتراضياً */
-            gap: 20px;
-            justify-content: center;
-            margin: 20px 0 28px;
-            flex-wrap: wrap;
-        }
-
-        .countdown.active {
-            display: flex;
-        }
-
-        .countdown-item {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 18px 14px;
-            min-width: 75px;
-            text-align: center;
-        }
-
-        .countdown-number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .countdown-label {
-            font-size: 0.7rem;
-            color: #8888aa;
-            margin-top: 4px;
-        }
-
-        .no-date {
-            font-size: 1.3rem;
-            color: #f59e0b;
-            font-weight: 600;
-            margin: 10px 0 20px;
-            animation: glowText 2s ease-in-out infinite;
-        }
-
-        @keyframes glowText {
-            0%,
-            100% {
-                text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
-            }
-            50% {
-                text-shadow: 0 0 40px rgba(245, 158, 11, 0.8);
-            }
-        }
-
-        /* زر التحديث */
-        .refresh-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Cairo', sans-serif;
-            margin-top: 8px;
-        }
-
-        .refresh-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 30px rgba(79, 140, 255, 0.25);
-            transform: translateY(-2px);
-        }
-
-        /* للهاتف */
-        @media (max-width: 600px) {
-            .main-container {
-                padding: 35px 20px;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
-            .description {
-                font-size: 0.85rem;
-            }
-            .countdown-number {
-                font-size: 1.5rem;
-            }
-            .countdown-item {
-                min-width: 60px;
-                padding: 14px 10px;
-            }
-        }
+        .modal{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,0.98);backdrop-filter:blur(20px);border-radius:var(--radius) var(--radius) 0 0;transform:translateY(100%);transition:var(--transition);padding:20px 16px;max-height:75dvh;overflow-y:auto;border:1px solid var(--border-light);box-shadow:0 -10px 30px rgba(0,0,0,0.5);max-width:520px;margin:0 auto}
+        .modal.show{transform:translateY(0)}
+        .modal h2{text-align:center;margin-bottom:16px;font-weight:700;color:var(--text);font-size:1.1rem}
+        .modal input,.modal textarea{width:100%;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);margin-bottom:8px;font-size:0.85rem;outline:none;font-family:'Cairo',sans-serif;transition:var(--transition)}
+        .modal input:focus,.modal textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+        .modal button{width:100%;padding:12px;background:linear-gradient(135deg,var(--primary),#059669);border:none;border-radius:var(--radius-sm);color:#fff;font-weight:600;cursor:pointer;margin-top:4px;font-size:0.9rem;transition:var(--transition)}
+        .modal button:hover{background:var(--danger)}
+        .history-item{padding:12px;border-bottom:1px solid var(--border-light);cursor:pointer;transition:0.2s}
+        .history-item:hover{background:var(--primary-soft)}
+        .history-preview{color:var(--text);font-size:0.85rem;font-weight:500}
+        .history-date{color:var(--text-dim);font-size:0.7rem;margin-top:4px}
+        .news-item{padding:10px;border-bottom:1px solid var(--border-light);font-size:0.85rem}
+        .news-item a{color:var(--primary);text-decoration:none}
+        .news-loading{text-align:center;padding:20px;color:var(--text-dim)}
+        .toggle-switch{position:relative;display:inline-block;width:44px;height:24px;margin-left:10px}
+        .toggle-switch input{opacity:0;width:0;height:0}
+        .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#3a3a5c;transition:0.3s;border-radius:24px}
+        .slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:white;transition:0.3s;border-radius:50%}
+        input:checked+.slider{background-color:var(--primary)}
+        input:checked+.slider:before{transform:translateX(20px)}
+        .settings-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-light)}
+        .settings-label{font-weight:600;color:var(--text);font-size:0.9rem}
     </style>
 </head>
 <body>
-    <canvas id="particlesCanvas"></canvas>
-
-    <div class="glow-orb orb1"></div>
-    <div class="glow-orb orb2"></div>
-    <div class="glow-orb orb3"></div>
-
-    <div class="main-container">
-        <div class="icon-circle">🚀</div>
-
-        <h1>شيء كبير قادم...</h1>
-
-        <p class="description">
-            نحن نعمل حاليًا على تطوير إصدار جديد بالكامل من الموقع، بتصميم أفضل، وأداء أسرع، وتجربة استخدام أكثر احترافية. نعتذر عن الإزعاج، ونتطلع للترحيب بك قريبًا.
-        </p>
-
-        <div class="rotating-message" id="rotatingMessage">
-            ✨ نعمل على تجربة استخدام جديدة.
-        </div>
-
-        <!-- العداد التنازلي (غير مفعل حالياً) -->
-        <div class="countdown" id="countdownContainer">
-            <div class="countdown-item">
-                <div class="countdown-number" id="days">00</div>
-                <div class="countdown-label">يوم</div>
-            </div>
-            <div class="countdown-item">
-                <div class="countdown-number" id="hours">00</div>
-                <div class="countdown-label">ساعة</div>
-            </div>
-            <div class="countdown-item">
-                <div class="countdown-number" id="minutes">00</div>
-                <div class="countdown-label">دقيقة</div>
-            </div>
-            <div class="countdown-item">
-                <div class="countdown-number" id="seconds">00</div>
-                <div class="countdown-label">ثانية</div>
-            </div>
-        </div>
-
-        <div class="no-date" id="noDateMessage">قريبًا جدًا...</div>
-
-        <button class="refresh-btn" onclick="location.reload()">
-            <i class="fas fa-sync-alt"></i> تحديث الصفحة
+<div class="app" id="app">
+    <div class="header">
+        <div class="user-avatar" id="userAvatar" title="الملف الشخصي (اضغط للإدارة)">S</div>
+        <div class="header-title"><i class="fas fa-rocket"></i> Sonic Flash</div>
+        <button class="model-select-btn" id="modelSelectBtn" onclick="openModelPopup()">
+            <span class="model-dot l1" id="modelDot"></span>
+            <span id="modelName">1.4 Lite</span>
+            <i class="fas fa-chevron-down" style="font-size:0.5rem;"></i>
         </button>
+        <div class="points-btn" id="pointsBtn">
+            <i class="fas fa-credit-card"></i>
+            <span id="pts">200</span>
+            <div class="points-tooltip" id="pointsTooltip">لديك 200 نقطة</div>
+        </div>
+        <div class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></div>
     </div>
+    <div class="content" id="chatArea">
+        <div class="welcome-area" id="welcomeBox">
+            <h1 class="welcome-heading">مرحبًا، كيف يمكنني مساعدتك اليوم؟</h1>
+            <p class="welcome-subtitle">مساعدك الذكي، يفهمك ويساعدك بكل دقة</p>
+            <div class="suggestion-cards">
+                <div class="suggestion-card" onclick="sendQuick('اكتب لي كود موقع شخصي احترافي')"><div class="suggestion-icon"><i class="fas fa-code"></i></div><div><div class="suggestion-text">ساعدني في البرمجة</div><div class="suggestion-desc">أكواد نظيفة وحلول ذكية</div></div></div>
+                <div class="suggestion-card" onclick="sendQuick('ما هي آخر أخبار كأس العالم 2026؟')"><div class="suggestion-icon"><i class="fas fa-futbol"></i></div><div><div class="suggestion-text">كأس العالم 2026</div><div class="suggestion-desc">آخر النتائج والإحصائيات</div></div></div>
+                <div class="suggestion-card" onclick="sendQuick('اكتب لي مقالاً احترافياً عن التكنولوجيا')"><div class="suggestion-icon"><i class="fas fa-pen-to-square"></i></div><div><div class="suggestion-text">اكتب مقالًا</div><div class="suggestion-desc">مقال احترافي في أي موضوع</div></div></div>
+                <div class="suggestion-card" onclick="sendQuick('ترجم لي هذا النص إلى الإنجليزية')"><div class="suggestion-icon"><i class="fas fa-language"></i></div><div><div class="suggestion-text">ترجم النص</div><div class="suggestion-desc">ترجمة دقيقة وسريعة</div></div></div>
+            </div>
+        </div>
+        <div id="messages"></div>
+    </div>
+    <div class="input-area" id="inputArea">
+        <div class="input-box"><input type="text" id="userInput" placeholder="اكتب رسالتك..."><button class="send-btn" id="sendBtn"><i class="fas fa-arrow-up"></i></button></div>
+    </div>
+</div>
 
-    <script>
-        // ========== خلفية الجسيمات ==========
-        const canvas = document.getElementById('particlesCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
+<!-- نافذة النماذج -->
+<div class="model-popup-overlay" id="modelPopupOverlay">
+    <div class="model-popup">
+        <h2>اختر النموذج المناسب</h2>
+        <div class="model-list" id="modelList"></div>
+        <button class="model-close-btn" onclick="closeModelPopup()">إغلاق</button>
+    </div>
+</div>
 
-        function resizeCanvas() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+<!-- نافذة القفل الجديدة -->
+<div class="lock-message-overlay" id="lockMessageOverlay">
+    <div class="lock-message">
+        <div class="icon">🔒</div>
+        <h2>⚡ Sonic Flash</h2>
+        <p style="color:#aaa; font-size:0.9rem;">This model is temporarily locked.</p>
+        <p style="color:#777; font-size:0.8rem; line-height:1.8;">
+            A new generation of Sonic Flash is currently being deployed. During this transition, access has been temporarily suspended to ensure stability and the highest quality experience.
+        </p>
+        <p style="color:#777; font-size:0.8rem;">We appreciate your patience.</p>
+        <div class="status">Status: Upgrading...</div>
+        <div class="availability">Estimated Availability: Coming Soon</div>
+        <button onclick="closeLockMessage()">حسناً</button>
+    </div>
+</div>
 
-        class Particle {
-            constructor() {
-                this.reset();
-                this.y = Math.random() * height;
-            }
-            reset() {
-                this.x = Math.random() * width;
-                this.y = -10;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedY = Math.random() * 1.2 + 0.4;
-                this.speedX = (Math.random() - 0.5) * 0.4;
-                this.opacity = Math.random() * 0.5 + 0.2;
-                this.hue = Math.random() < 0.5 ? 210 : 270;
-            }
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                if (this.y > height + 10) {
-                    this.reset();
-                    this.y = -10;
+<div class="overlay" id="overlay"></div>
+<div class="sidebar" id="sidebar">
+    <h3>القائمة</h3>
+    <div class="sidebar-item" onclick="newChat()"><i class="fas fa-plus-circle"></i><div class="label">محادثة جديدة</div></div>
+    <div class="sidebar-item" onclick="openHistoryModal()"><i class="fas fa-history"></i><div class="label">المحادثات السابقة</div></div>
+    <div class="sidebar-item" onclick="openGiftModal()"><i class="fas fa-gift"></i><div class="label">المكافآت والأكواد</div></div>
+    <div class="sidebar-item" onclick="openTransferModal()"><i class="fas fa-paper-plane"></i><div class="label">إرسال نقاط</div></div>
+    <div class="sidebar-item" onclick="openNewsModal('general')"><i class="fas fa-newspaper"></i><div class="label">آخر الأخبار</div></div>
+    <div class="sidebar-item" onclick="openNewsModal('worldcup')"><i class="fas fa-trophy"></i><div class="label">كأس العالم</div></div>
+    <div class="sidebar-item" onclick="openSettingsModal()"><i class="fas fa-cog"></i><div class="label">الإعدادات</div></div>
+    <div class="sidebar-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i><div class="label">تسجيل الخروج</div></div>
+</div>
+
+<!-- باقي النوافذ -->
+<div class="modal" id="historyModal">
+    <h2>المحادثات السابقة</h2>
+    <div id="historyList"></div>
+    <button onclick="closeHistoryModal()" style="margin-top:12px;">إغلاق</button>
+</div>
+<div class="modal" id="newsModal">
+    <h2 id="newsTitle">آخر الأخبار</h2>
+    <div id="newsContent"><div class="news-loading"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div></div>
+    <button onclick="closeNewsModal()">إغلاق</button>
+</div>
+<div class="modal" id="transferModal">
+    <h2>إرسال نقاط</h2>
+    <input type="text" id="recipientId" placeholder="معرف المستلم"><input type="number" id="transferAmount" placeholder="المبلغ" min="1">
+    <button onclick="sendPoints()">إرسال</button>
+    <button onclick="closeTransferModal()" style="background:var(--surface); margin-top:8px;">إلغاء</button>
+</div>
+<div class="modal" id="giftModal">
+    <h2>تفعيل كود</h2>
+    <input type="text" id="giftCode" placeholder="أدخل الكود السري">
+    <button onclick="redeemCode()">تفعيل</button>
+    <button onclick="closeGiftModal()" style="background:var(--surface); margin-top:8px;">إلغاء</button>
+</div>
+<div class="modal" id="settingsModal">
+    <h2>الإعدادات</h2>
+    <div class="settings-row"><span class="settings-label">الوضع الداكن</span><label class="toggle-switch"><input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()"><span class="slider"></span></label></div>
+    <div class="settings-row"><span class="settings-label">معرف المستخدم</span><span id="settingsUserId" style="font-weight:bold;color:var(--primary)"></span></div>
+    <button onclick="closeSettingsModal()" style="margin-top:12px;">إغلاق</button>
+</div>
+<div class="modal" id="adminModal">
+    <h2>لوحة الإدارة</h2>
+    <div id="adminContent">
+        <label>معرفي: <span id="currentUserId" style="font-weight:bold;color:var(--primary)"></span></label>
+        <label>نقاطي: <span id="adminPoints"></span></label>
+        <input type="number" id="newPoints" placeholder="النقاط الجديدة"><button onclick="setPoints()">تحديث نقاطي</button>
+        <button onclick="clearChat()" style="background:var(--surface); margin-top:8px;">مسح المحادثة</button>
+        <hr style="margin:10px 0;border-color:var(--border-light)"><h3 style="font-size:0.9rem;">إدارة الحظر</h3>
+        <input type="text" id="blockUserId" placeholder="معرف المستخدم لحظره"><button onclick="blockUser()">حظر</button>
+        <div id="blockedList" style="margin-top:8px;font-size:0.8rem;"></div>
+        <hr style="margin:10px 0;border-color:var(--border-light)"><h3 style="font-size:0.9rem;">إعطاء نقاط لمستخدم (MQTT)</h3>
+        <input type="text" id="targetUserId" placeholder="معرف المستخدم المستهدف"><input type="number" id="targetAmount" placeholder="عدد النقاط" min="1"><button onclick="givePointsToUser()">إعطاء</button>
+        <hr style="margin:10px 0;border-color:var(--border-light)"><h3 style="font-size:0.9rem;">الأكواد السرية</h3>
+        <div id="codesList" style="font-size:0.7rem;max-height:150px;overflow-y:auto;background:var(--surface);padding:8px;border-radius:10px;"></div>
+    </div>
+    <button onclick="closeAdminModal()" style="margin-top:8px;background:var(--surface);">إغلاق</button>
+</div>
+
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<script>
+    // ========== التطبيق ==========
+    const getUserId = () => { let uid = localStorage.getItem('sonic_uid'); if (!uid) { uid = Math.floor(10000 + Math.random() * 90000).toString(); localStorage.setItem('sonic_uid', uid); } return uid; };
+    const CURRENT_USER_ID = getUserId();
+    const encrypt = (pts) => btoa([...pts.toString()].map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ CURRENT_USER_ID.charCodeAt(i % CURRENT_USER_ID.length))).join(''));
+    const decrypt = (enc) => { try { const dec = atob(enc); return parseInt([...dec].map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ CURRENT_USER_ID.charCodeAt(i % CURRENT_USER_ID.length))).join('')); } catch(e) { return null; } };
+    const loadPoints = () => { const enc = localStorage.getItem('sonic_points_encrypted'); const time = localStorage.getItem('sonic_points_time'); if (enc && time && (Date.now() - parseInt(time)) < 86400000) { const pts = decrypt(enc); if (pts !== null) return pts; } savePoints(200); return 200; };
+    const savePoints = (pts) => { localStorage.setItem('sonic_points_encrypted', encrypt(pts)); localStorage.setItem('sonic_points_time', Date.now().toString()); };
+    const loadDarkMode = () => localStorage.getItem('sonic_dark_mode') === 'true';
+    const saveDarkMode = (v) => localStorage.setItem('sonic_dark_mode', v.toString());
+    const applyDarkMode = (v) => { document.getElementById('darkModeToggle').checked = v; };
+    window.toggleDarkMode = () => { const v = document.getElementById('darkModeToggle').checked; applyDarkMode(v); saveDarkMode(v); };
+    applyDarkMode(loadDarkMode());
+
+    const appState = { points: loadPoints(), selectedModel: '1.4-lite', chatHistory: [] };
+    const GROQ_KEY = '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';
+    const OPENROUTER_KEY = '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';
+
+    // دالة التحقق من قفل نموذج Sonic Flash
+    const isFlashLocked = () => localStorage.getItem('sonic_flash_locked') !== 'false';
+    const unlockFlash = () => { localStorage.setItem('sonic_flash_locked', 'false'); alert('✅ تم فتح Sonic Flash بنجاح!'); renderModelOptions(); };
+
+    const models = {
+        '1.4-lite': { name: '1.4 Lite', dotClass: 'l1', displayName: '1.4 Lite', cost: 0, costLabel: 'مجاني', provider: 'groq', modelId: 'llama-3.3-70b-versatile', systemPrompt: 'مساعد بسيط ومهذب. أجب بإيجاز.', temperature: 0.3, max_tokens: 200 },
+        '1.5': { name: '1.5', dotClass: 'l2', displayName: '1.5', cost: 5, costLabel: '5 نقاط', provider: 'groq', modelId: 'llama-3.3-70b-versatile', systemPrompt: 'مساعد ذكي ومفيد. أجب بوضوح.', temperature: 0.5, max_tokens: 400 },
+        '1.6': { name: '1.6', dotClass: 'l3', displayName: '1.6', cost: 10, costLabel: '10 نقاط', provider: 'groq', modelId: 'llama-3.3-70b-versatile', systemPrompt: 'خبير اللغة العربية. أجب بدقة وفصاحة.', temperature: 0.7, max_tokens: 700 },
+        'flash': { name: 'Sonic Flash', dotClass: 'l5', displayName: 'SF', cost: 15, costLabel: '15 نقطة', provider: 'openrouter', modelId: 'deepseek/deepseek-chat', systemPrompt: 'أنت Sonic Flash، مساعد ذكي ومفيد. تجيب بالعربية الفصحى أو العامية المصرية حسب السياق. تستخدم الإيموجي باعتدال. لا تذكر أنك "تم تدريبك" إلا إذا سُئلت مباشرة. أنت محدث حتى يوليو 2026.', temperature: 0.6, max_tokens: 1000, locked: true },
+        '1.7': { name: '1.7', dotClass: 'l4', displayName: '1.7', cost: 20, costLabel: '20 نقطة', provider: 'groq', modelId: 'llama-3.3-70b-versatile', systemPrompt: 'أفضل متحدث بالعربية. كن طبيعيًا ودافئًا.', temperature: 0.78, max_tokens: 900 }
+    };
+
+    const SECRET_CODES = { 'KEY-A7XM-2QPL': 100, 'KEY-B9KR-5LZT': 100, 'KEY-C4VN-8WQH': 100, 'KEY-D1TP-6MXA': 100, 'KEY-E8QL-3RKN': 100, 'KEY-F5ZH-7LPM': 200, 'KEY-G2XA-9QRT': 200, 'KEY-H6WK-4NLP': 200, 'KEY-I3MV-8KQZ': 200, 'KEY-J9TR-1XPH': 200, 'KEY-K4QN-7LZA': 300, 'KEY-L8XP-2MRT': 300, 'KEY-M5HV-9QKL': 300, 'KEY-N1ZA-6WTP': 300, 'KEY-O7RL-3XQM': 300, 'KEY-P2KM-8VQT': 500, 'KEY-Q6XA-4LPN': 500, 'KEY-R9ZH-1WKT': 500, 'KEY-S3QP-7MXL': 500, 'KEY-T8VN-5RKA': 500, 'KEY-U4XL-9QPM': 750, 'KEY-V7KT-2ZHA': 750, 'KEY-W1RN-6LPQ': 750, 'KEY-X5MQ-8TVK': 750, 'KEY-Y9PA-3XWL': 750, 'KEY-Z2LK-7QRM': 1000, 'KEY-A6TP-4VXN': 1000, 'KEY-B8QH-1LZM': 1000, 'KEY-C5WR-9KPA': 1000, 'KEY-D3XM-6QTL': 1000, 'KEY-E7VN-2RKP': 1500, 'KEY-F1QZ-8LXH': 1500, 'KEY-G9MT-5WKA': 1500, 'KEY-H4PL-7XQN': 1500, 'KEY-I6RA-3VZM': 1500, 'KEY-J8QK-1LTP': 2000, 'KEY-K5XM-9RWA': 2000, 'KEY-L2VH-6QPN': 2000, 'KEY-M7ZT-4KXL': 2000, 'KEY-N3RP-8QAM': 2000, 'KEY-O9WL-5XTK': 5000, 'KEY-P4QN-7LZM': 5000, 'KEY-Q1XA-3VPH': 5000, 'KEY-R8KM-6QTL': 5000, 'KEY-S2ZH-9WRP': 5000, 'KEY-T6LP-4XQN': 10000, 'KEY-U3RM-8KZA': 10000, 'KEY-V9QT-1WXL': 10000, 'KEY-W5HA-7PLM': 10000, 'KEY-X2KN-6QRT': 10000, 'SONIC2024': 50, 'SONIC7000': 7000 };
+
+    const els = {
+        welcomeBox: document.getElementById('welcomeBox'), messagesContainer: document.getElementById('messages'),
+        userInput: document.getElementById('userInput'), sendBtn: document.getElementById('sendBtn'),
+        ptsSpan: document.getElementById('pts'), pointsTooltip: document.getElementById('pointsTooltip'),
+        pointsBtn: document.getElementById('pointsBtn'), menuBtn: document.getElementById('menuBtn'),
+        sidebar: document.getElementById('sidebar'), overlay: document.getElementById('overlay'),
+        modelSelectBtn: document.getElementById('modelSelectBtn'), modelDot: document.getElementById('modelDot'),
+        modelName: document.getElementById('modelName'), modelPopupOverlay: document.getElementById('modelPopupOverlay'),
+        chatArea: document.getElementById('chatArea'), userAvatar: document.getElementById('userAvatar'),
+        modelList: document.getElementById('modelList')
+    };
+
+    let mqttClient;
+    try { mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'sonic_' + CURRENT_USER_ID }); mqttClient.on('connect', () => mqttClient.subscribe('sonic/user/' + CURRENT_USER_ID + '/addpoints')); mqttClient.on('message', (topic, msg) => { const amt = parseInt(msg.toString()); if (amt > 0) { appState.points += amt; updatePoints(); alert('🎉 تم استلام ' + amt + ' نقطة!'); } }); } catch(e) {}
+
+    const updatePoints = () => { els.ptsSpan.textContent = appState.points; els.pointsTooltip.textContent = 'لديك ' + appState.points + ' نقطة'; savePoints(appState.points); };
+    const showWelcome = () => { if (appState.chatHistory.length === 0) { els.welcomeBox.style.display = 'block'; els.messagesContainer.innerHTML = ''; } else { els.welcomeBox.style.display = 'none'; } };
+    const scrollDown = () => els.chatArea.scrollTop = els.chatArea.scrollHeight;
+
+    function typewriterEffect(element, text, speed = 30) {
+        let i = 0; element.textContent = '';
+        const cursor = document.createElement('span'); cursor.className = 'typing-cursor'; element.appendChild(cursor);
+        const interval = setInterval(() => {
+            if (i < text.length) { element.insertBefore(document.createTextNode(text.charAt(i)), cursor); i++; scrollDown(); }
+            else { clearInterval(interval); cursor.remove(); }
+        }, speed);
+    }
+
+    const addMsg = (type, text, animate = false) => {
+        const div = document.createElement('div'); div.className = `msg ${type}`; const b = document.createElement('div'); b.className = 'bubble';
+        if (type === 'ai') {
+            const copyBtn = document.createElement('button'); copyBtn.className = 'copy-btn'; copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            copyBtn.onclick = () => navigator.clipboard.writeText(text); b.appendChild(copyBtn);
+            if (animate) { typewriterEffect(b, text); } else { b.appendChild(document.createTextNode(text)); }
+        } else { b.textContent = text; }
+        div.appendChild(b); els.messagesContainer.appendChild(div); scrollDown();
+    };
+
+    const callAPI = async (persona, messages) => {
+        const isOpenRouter = persona.provider === 'openrouter';
+        const endpoint = isOpenRouter ? 'https://openrouter.ai/api/v1/chat/completions' : 'https://api.groq.com/openai/v1/chat/completions';
+        const apiKey = isOpenRouter ? OPENROUTER_KEY : GROQ_KEY;
+        const body = { model: persona.modelId, messages, temperature: persona.temperature, max_tokens: persona.max_tokens };
+        const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` }, body: JSON.stringify(body) });
+        if (!res.ok) { const err = await res.json(); throw new Error((isOpenRouter ? 'OpenRouter' : 'Groq') + ': ' + (err.error?.message || 'خطأ')); }
+        const data = await res.json(); return data.choices[0].message.content;
+    };
+
+    const getReply = async (userMsg) => {
+        const persona = models[appState.selectedModel];
+        const messages = [{ role: 'system', content: persona.systemPrompt }, ...appState.chatHistory.slice(-10).map(m => ({ role: m.type === 'user' ? 'user' : 'assistant', content: m.text })), { role: 'user', content: userMsg }];
+        return callAPI(persona, messages);
+    };
+
+    const sendMessage = async (text) => {
+        if (!text.trim()) return;
+        const cost = models[appState.selectedModel].cost;
+        if (cost > 0 && appState.points < cost) { alert(`رصيدك غير كافٍ! تحتاج ${cost} نقطة.`); return; }
+        const userText = text.trim(); appState.chatHistory.push({ type: 'user', text: userText }); showWelcome(); addMsg('user', userText);
+        els.userInput.value = ''; if (cost > 0) { appState.points -= cost; updatePoints(); }
+        const thinking = document.createElement('div'); thinking.className = 'msg ai'; thinking.innerHTML = '<div class="bubble"><span class="typing-cursor"></span></div>'; els.messagesContainer.appendChild(thinking);
+        try { const reply = await getReply(userText); thinking.remove(); appState.chatHistory.push({ type: 'ai', text: reply }); addMsg('ai', reply, true); } catch (e) { thinking.remove(); addMsg('ai', '⚠️ ' + e.message); }
+    };
+
+    els.sendBtn.onclick = () => sendMessage(els.userInput.value);
+    els.userInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(els.userInput.value); };
+    els.menuBtn.onclick = () => { els.sidebar.classList.toggle('open'); els.overlay.classList.toggle('show'); };
+    els.overlay.onclick = () => { els.sidebar.classList.remove('open'); els.overlay.classList.remove('show'); closeAllModals(); };
+    els.pointsBtn.onclick = () => { els.pointsTooltip.classList.toggle('show'); setTimeout(() => els.pointsTooltip.classList.remove('show'), 2000); };
+
+    // عرض قائمة النماذج مع القفل
+    const renderModelOptions = () => {
+        els.modelList.innerHTML = '';
+        for (const [key, p] of Object.entries(models)) {
+            const locked = key === 'flash' && isFlashLocked();
+            const option = document.createElement('div');
+            option.className = 'model-option' + (appState.selectedModel === key ? ' selected' : '') + (locked ? ' locked' : '');
+            option.innerHTML = `
+                <div class="model-option-info">
+                    <div class="model-option-name">${p.name} ${locked ? '<i class="fas fa-lock" style="color:#ffb74d; margin-right:6px;"></i>' : ''}</div>
+                    <div class="model-option-desc">${locked ? 'غير متاح مؤقتاً' : (key === 'flash' ? 'أحدث إصدار وأذكى نموذج' : 'ذكاء اصطناعي متوازن')}</div>
+                </div>
+                <div class="model-option-cost">${p.costLabel}</div>
+            `;
+            option.onclick = () => {
+                if (locked) {
+                    showLockMessage();
+                } else {
+                    selectModel(key);
                 }
-                if (this.x < -10) this.x = width + 10;
-                if (this.x > width + 10) this.x = -10;
-            }
-            draw(ctx) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity})`;
-                ctx.fill();
-                ctx.shadowColor = `hsla(${this.hue}, 80%, 60%, ${this.opacity * 0.6})`;
-                ctx.shadowBlur = 6;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            }
+            };
+            els.modelList.appendChild(option);
         }
+    };
+    renderModelOptions();
 
-        for (let i = 0; i < 100; i++) {
-            particles.push(new Particle());
-        }
+    const openModelPopup = () => { els.modelPopupOverlay.classList.add('show'); renderModelOptions(); };
+    const closeModelPopup = () => els.modelPopupOverlay.classList.remove('show');
+    const selectModel = (key) => {
+        appState.selectedModel = key;
+        const p = models[key];
+        els.modelDot.className = 'model-dot ' + p.dotClass;
+        els.modelName.textContent = p.displayName || p.name;
+        renderModelOptions();
+        closeModelPopup();
+    };
+    const closeAllModals = () => { document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show')); els.modelPopupOverlay.classList.remove('show'); els.sidebar.classList.remove('open'); els.overlay.classList.remove('show'); };
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => {
-                p.update();
-                p.draw(ctx);
-            });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
+    // وظائف نافذة القفل
+    const showLockMessage = () => { document.getElementById('lockMessageOverlay').classList.add('show'); };
+    const closeLockMessage = () => { document.getElementById('lockMessageOverlay').classList.remove('show'); };
 
-        // ========== الرسائل المتغيرة ==========
-        const messages = [
-            '✨ نعمل على تجربة استخدام جديدة.',
-            '⚡ أداء أسرع واستقرار أكبر.',
-            '🎨 تصميم حديث بالكامل.',
-            '🔒 تحسينات كبيرة في الأمان.',
-            '🚀 مفاجآت كثيرة بانتظاركم.'
-        ];
-        let msgIndex = 0;
-        const messageEl = document.getElementById('rotatingMessage');
+    // ========== المحادثات السابقة ==========
+    const saveCurrentChat = () => {
+        if (appState.chatHistory.length === 0) return;
+        const histories = JSON.parse(localStorage.getItem('sonic_histories') || '[]');
+        const preview = appState.chatHistory.find(m => m.type === 'user')?.text.substring(0, 30) || 'بدون عنوان';
+        histories.unshift({ id: Date.now(), preview, date: new Date().toLocaleString('ar-EG'), history: [...appState.chatHistory] });
+        if (histories.length > 10) histories.pop();
+        localStorage.setItem('sonic_histories', JSON.stringify(histories));
+    };
 
-        setInterval(() => {
-            msgIndex = (msgIndex + 1) % messages.length;
-            messageEl.style.opacity = '0';
-            messageEl.style.transform = 'translateY(8px)';
-            setTimeout(() => {
-                messageEl.textContent = messages[msgIndex];
-                messageEl.style.opacity = '1';
-                messageEl.style.transform = 'translateY(0)';
-            }, 400);
-        }, 3500);
+    const loadChatFromHistory = (history) => {
+        appState.chatHistory = history;
+        els.messagesContainer.innerHTML = '';
+        for (const msg of history) { addMsg(msg.type, msg.text, false); }
+        showWelcome();
+        closeHistoryModal();
+    };
 
-        // ========== العداد التنازلي (اختياري) ==========
-        // لتحديد تاريخ الإطلاق: غير التاريخ أدناه
-        const LAUNCH_DATE = null; // مثال: new Date('2026-12-31T23:59:59')
-        const countdownContainer = document.getElementById('countdownContainer');
-        const noDateMessage = document.getElementById('noDateMessage');
-
-        if (LAUNCH_DATE) {
-            countdownContainer.classList.add('active');
-            noDateMessage.style.display = 'none';
-
-            function updateCountdown() {
-                const now = new Date().getTime();
-                const distance = LAUNCH_DATE.getTime() - now;
-
-                if (distance < 0) {
-                    countdownContainer.innerHTML =
-                        '<div style="color:#4ade80;font-size:1.3rem;font-weight:700;">🎉 تم الإطلاق!</div>';
-                    return;
-                }
-
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                document.getElementById('days').textContent = String(days).padStart(2, '0');
-                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-            }
-
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
+    const openHistoryModal = () => {
+        const modal = document.getElementById('historyModal');
+        const list = document.getElementById('historyList');
+        modal.classList.add('show'); els.overlay.classList.add('show');
+        const histories = JSON.parse(localStorage.getItem('sonic_histories') || '[]');
+        if (histories.length === 0) {
+            list.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;">لا توجد محادثات سابقة</div>';
         } else {
-            countdownContainer.classList.remove('active');
-            noDateMessage.style.display = 'block';
+            list.innerHTML = histories.map(h => `<div class="history-item" onclick="loadChatFromHistory(${JSON.stringify(h.history)})"><div class="history-preview">${h.preview}</div><div class="history-date">${h.date}</div></div>`).join('');
         }
-    </script>
+    };
+    const closeHistoryModal = () => { document.getElementById('historyModal').classList.remove('show'); els.overlay.classList.remove('show'); };
+    window.loadChatFromHistory = loadChatFromHistory;
+
+    window.newChat = () => { saveCurrentChat(); appState.chatHistory = []; els.messagesContainer.innerHTML = ''; showWelcome(); closeAllModals(); };
+    window.sendQuick = (text) => sendMessage(text);
+
+    // الأخبار
+    const openNewsModal = async (type) => {
+        const modal = document.getElementById('newsModal'); const title = document.getElementById('newsTitle'); const content = document.getElementById('newsContent');
+        modal.classList.add('show'); els.overlay.classList.add('show');
+        content.innerHTML = '<div class="news-loading"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
+        const rssUrl = type === 'worldcup' ? 'https://news.google.com/rss/search?q=كأس+العالم&hl=ar&gl=EG&ceid=EG:ar' : 'https://news.google.com/rss?hl=ar&gl=EG&ceid=EG:ar';
+        title.textContent = type === 'worldcup' ? 'أخبار كأس العالم' : 'آخر الأخبار';
+        try {
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+            const res = await fetch(proxyUrl); const text = await res.text();
+            const parser = new DOMParser(); const xml = parser.parseFromString(text, 'application/xml');
+            const items = xml.querySelectorAll('item');
+            content.innerHTML = Array.from(items).slice(0, 10).map(item => {
+                const t = item.querySelector('title')?.textContent || '', l = item.querySelector('link')?.textContent || '#', d = item.querySelector('pubDate')?.textContent || '';
+                return `<div class="news-item"><a href="${l}" target="_blank">${t}</a><div style="font-size:0.7rem;color:var(--text-dim)">${d ? new Date(d).toLocaleDateString('ar-EG') : ''}</div></div>`;
+            }).join('') || '<div class="news-loading">لا توجد أخبار حالياً.</div>';
+        } catch(e) { content.innerHTML = '<div class="news-loading">⚠️ تعذر جلب الأخبار.</div>'; }
+    };
+    const closeNewsModal = () => { document.getElementById('newsModal').classList.remove('show'); els.overlay.classList.remove('show'); };
+
+    const openGiftModal = () => { document.getElementById('giftModal').classList.add('show'); els.overlay.classList.add('show'); };
+    const closeGiftModal = () => { document.getElementById('giftModal').classList.remove('show'); els.overlay.classList.remove('show'); };
+    const redeemCode = () => {
+        const code = document.getElementById('giftCode').value.trim().toUpperCase();
+        // تفعيل فتح نموذج Sonic Flash
+        if (code === 'UNLOCK-SF') { unlockFlash(); closeGiftModal(); document.getElementById('giftCode').value = ''; return; }
+        const used = JSON.parse(localStorage.getItem('sonic_used_codes') || '[]');
+        if (used.includes(code)) { alert('هذا الكود تم استخدامه من قبل.'); return; }
+        if (SECRET_CODES[code] !== undefined) { const amt = SECRET_CODES[code]; appState.points += amt; updatePoints(); used.push(code); localStorage.setItem('sonic_used_codes', JSON.stringify(used)); alert(`تمت إضافة ${amt} نقطة!`); closeGiftModal(); document.getElementById('giftCode').value = ''; }
+        else alert('كود غير صالح');
+    };
+
+    const openTransferModal = () => { document.getElementById('transferModal').classList.add('show'); els.overlay.classList.add('show'); };
+    const closeTransferModal = () => { document.getElementById('transferModal').classList.remove('show'); els.overlay.classList.remove('show'); };
+    const sendPoints = () => { const recipient = document.getElementById('recipientId').value.trim(); const amount = parseInt(document.getElementById('transferAmount').value); if (!recipient || isNaN(amount) || amount <= 0) return alert('بيانات غير صحيحة'); if (amount > appState.points) return alert('رصيد غير كاف'); if (mqttClient && mqttClient.connected) { mqttClient.publish('sonic/user/' + recipient + '/addpoints', amount.toString(), { qos: 1 }, (err) => { if (!err) { appState.points -= amount; updatePoints(); alert(`تم إرسال ${amount} نقطة`); closeTransferModal(); } else alert('فشل الإرسال'); }); } else alert('MQTT غير متصل'); };
+
+    const getBlockedUsers = () => JSON.parse(localStorage.getItem('sonic_blocked_users') || '[]');
+    const addBlocked = (id) => { const b = getBlockedUsers(); if (!b.includes(id)) { b.push(id); localStorage.setItem('sonic_blocked_users', JSON.stringify(b)); } };
+    const removeBlocked = (id) => { localStorage.setItem('sonic_blocked_users', JSON.stringify(getBlockedUsers().filter(x => x !== id))); };
+
+    const openAdminModal = () => { document.getElementById('adminModal').classList.add('show'); els.overlay.classList.add('show'); document.getElementById('adminPoints').textContent = appState.points; document.getElementById('currentUserId').textContent = CURRENT_USER_ID; renderBlockedList(); renderCodesList(); };
+    const closeAdminModal = () => { document.getElementById('adminModal').classList.remove('show'); els.overlay.classList.remove('show'); };
+    const setPoints = () => { const v = parseInt(document.getElementById('newPoints').value); if (!isNaN(v) && v >= 0) { appState.points = v; updatePoints(); } };
+    const clearChat = () => { appState.chatHistory = []; els.messagesContainer.innerHTML = ''; showWelcome(); };
+    const blockUser = () => { const id = document.getElementById('blockUserId').value.trim(); if (id) { addBlocked(id); alert(`تم حظر ${id}`); document.getElementById('blockUserId').value = ''; renderBlockedList(); } };
+    const unblockUser = (id) => { removeBlocked(id); renderBlockedList(); };
+    const renderBlockedList = () => { const blocked = getBlockedUsers(); const cnt = document.getElementById('blockedList'); cnt.innerHTML = blocked.length === 0 ? '<div style="color:var(--text-dim)">لا يوجد محظورون</div>' : blocked.map(id => `<div style="display:flex; justify-content:space-between;"><span>${id}</span><button onclick="unblockUser('${id}')" style="background:var(--danger);color:#fff;border:none;border-radius:10px;padding:2px 10px;font-size:0.7rem;">إلغاء</button></div>`).join(''); };
+    const renderCodesList = () => { const used = JSON.parse(localStorage.getItem('sonic_used_codes') || '[]'); document.getElementById('codesList').innerHTML = Object.entries(SECRET_CODES).map(([c,p]) => `<div style="display:flex;justify-content:space-between;${used.includes(c) ? 'color:var(--danger);text-decoration:line-through;' : ''}"><span>${c}</span><span>${p} نقطة</span></div>`).join(''); };
+    const givePointsToUser = () => { const target = document.getElementById('targetUserId').value.trim(); const amount = parseInt(document.getElementById('targetAmount').value); if (!target || isNaN(amount) || amount <= 0) return alert('بيانات غير صحيحة'); if (mqttClient && mqttClient.connected) { mqttClient.publish('sonic/user/' + target + '/addpoints', amount.toString(), { qos: 1 }, (err) => { if (!err) { alert(`تم إرسال ${amount} نقطة`); document.getElementById('targetUserId').value = ''; document.getElementById('targetAmount').value = ''; } else alert('فشل'); }); } else alert('MQTT غير متصل'); };
+
+    els.userAvatar.onclick = () => { const pwd = prompt('أدخل كلمة مرور المدير:'); if (pwd === 'admin112233') openAdminModal(); else alert('كلمة مرور خاطئة'); };
+
+    const openSettingsModal = () => { document.getElementById('settingsModal').classList.add('show'); els.overlay.classList.add('show'); document.getElementById('settingsUserId').textContent = CURRENT_USER_ID; document.getElementById('darkModeToggle').checked = loadDarkMode(); };
+    const closeSettingsModal = () => { document.getElementById('settingsModal').classList.remove('show'); els.overlay.classList.remove('show'); };
+
+    const logout = () => { appState.chatHistory = []; els.messagesContainer.innerHTML = ''; showWelcome(); closeAllModals(); alert('تم تسجيل الخروج. نقاطك محفوظة.'); };
+    window.logout = logout;
+
+    selectModel('1.4-lite');
+    updatePoints(); showWelcome();
+</script>
 </body>
 </html>
