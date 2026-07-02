@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🚀 تحت الصيانة — Sonic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #0a0a14;
+            color: #fff;
+            height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* خلفية الجسيمات */
+        #particlesCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* تأثيرات إضاءة */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glow-orb.orb1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #4f8cff, transparent);
+            top: -15%;
+            right: -10%;
+            animation: floatOrb 12s ease-in-out infinite;
+        }
+
+        .glow-orb.orb2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #a855f7, transparent);
+            bottom: -12%;
+            left: -8%;
+            animation: floatOrb 15s ease-in-out infinite reverse;
+        }
+
+        .glow-orb.orb3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #f59e0b, transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: floatOrb 18s ease-in-out infinite;
+        }
+
+        @keyframes floatOrb {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(40px, -30px) scale(1.1);
+            }
+            50% {
+                transform: translate(-20px, 25px) scale(0.9);
+            }
+            75% {
+                transform: translate(-35px, -20px) scale(1.05);
+            }
+        }
+
+        /* المحتوى الرئيسي */
+        .main-container {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 650px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 50px 35px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 120px rgba(79, 140, 255, 0.06);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f8cff, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            font-size: 44px;
+            box-shadow: 0 0 50px rgba(79, 140, 255, 0.35);
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                box-shadow: 0 0 50px rgba(79, 140, 255, 0.35);
+            }
+            50% {
+                box-shadow: 0 0 90px rgba(168, 85, 247, 0.55);
+            }
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff, #a0c4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .description {
+            color: #a0a0c0;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 28px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* الرسائل المتغيرة */
+        .rotating-message {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-size: 0.9rem;
+            color: #c0c0e0;
+            margin-bottom: 24px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            animation: messageSwap 15s infinite;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* العداد */
+        .countdown {
+            display: none;
+            /* لا يظهر افتراضياً */
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0 28px;
+            flex-wrap: wrap;
+        }
+
+        .countdown.active {
+            display: flex;
+        }
+
+        .countdown-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 18px 14px;
+            min-width: 75px;
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .countdown-label {
+            font-size: 0.7rem;
+            color: #8888aa;
+            margin-top: 4px;
+        }
+
+        .no-date {
+            font-size: 1.3rem;
+            color: #f59e0b;
+            font-weight: 600;
+            margin: 10px 0 20px;
+            animation: glowText 2s ease-in-out infinite;
+        }
+
+        @keyframes glowText {
+            0%,
+            100% {
+                text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(245, 158, 11, 0.8);
+            }
+        }
+
+        /* زر التحديث */
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+            margin-top: 8px;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 30px rgba(79, 140, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* للهاتف */
+        @media (max-width: 600px) {
+            .main-container {
+                padding: 35px 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .description {
+                font-size: 0.85rem;
+            }
+            .countdown-number {
+                font-size: 1.5rem;
+            }
+            .countdown-item {
+                min-width: 60px;
+                padding: 14px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particlesCanvas"></canvas>
+
+    <div class="glow-orb orb1"></div>
+    <div class="glow-orb orb2"></div>
+    <div class="glow-orb orb3"></div>
+
+    <div class="main-container">
+        <div class="icon-circle">🚀</div>
+
+        <h1>شيء كبير قادم...</h1>
+
+        <p class="description">
+            نحن نعمل حاليًا على تطوير إصدار جديد بالكامل من الموقع، بتصميم أفضل، وأداء أسرع، وتجربة استخدام أكثر احترافية. نعتذر عن الإزعاج، ونتطلع للترحيب بك قريبًا.
+        </p>
+
+        <div class="rotating-message" id="rotatingMessage">
+            ✨ نعمل على تجربة استخدام جديدة.
+        </div>
+
+        <!-- العداد التنازلي (غير مفعل حالياً) -->
+        <div class="countdown" id="countdownContainer">
+            <div class="countdown-item">
+                <div class="countdown-number" id="days">00</div>
+                <div class="countdown-label">يوم</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="hours">00</div>
+                <div class="countdown-label">ساعة</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="minutes">00</div>
+                <div class="countdown-label">دقيقة</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="seconds">00</div>
+                <div class="countdown-label">ثانية</div>
+            </div>
+        </div>
+
+        <div class="no-date" id="noDateMessage">قريبًا جدًا...</div>
+
+        <button class="refresh-btn" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i> تحديث الصفحة
+        </button>
+    </div>
+
+    <script>
+        // ========== خلفية الجسيمات ==========
+        const canvas = document.getElementById('particlesCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * height;
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = -10;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 1.2 + 0.4;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.hue = Math.random() < 0.5 ? 210 : 270;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y > height + 10) {
+                    this.reset();
+                    this.y = -10;
+                }
+                if (this.x < -10) this.x = width + 10;
+                if (this.x > width + 10) this.x = -10;
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity})`;
+                ctx.fill();
+                ctx.shadowColor = `hsla(${this.hue}, 80%, 60%, ${this.opacity * 0.6})`;
+                ctx.shadowBlur = 6;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        for (let i = 0; i < 100; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw(ctx);
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // ========== الرسائل المتغيرة ==========
+        const messages = [
+            '✨ نعمل على تجربة استخدام جديدة.',
+            '⚡ أداء أسرع واستقرار أكبر.',
+            '🎨 تصميم حديث بالكامل.',
+            '🔒 تحسينات كبيرة في الأمان.',
+            '🚀 مفاجآت كثيرة بانتظاركم.'
+        ];
+        let msgIndex = 0;
+        const messageEl = document.getElementById('rotatingMessage');
+
+        setInterval(() => {
+            msgIndex = (msgIndex + 1) % messages.length;
+            messageEl.style.opacity = '0';
+            messageEl.style.transform = 'translateY(8px)';
+            setTimeout(() => {
+                messageEl.textContent = messages[msgIndex];
+                messageEl.style.opacity = '1';
+                messageEl.style.transform = 'translateY(0)';
+            }, 400);
+        }, 3500);
+
+        // ========== العداد التنازلي (اختياري) ==========
+        // لتحديد تاريخ الإطلاق: غير التاريخ أدناه
+        const LAUNCH_DATE = null; // مثال: new Date('2026-12-31T23:59:59')
+        const countdownContainer = document.getElementById('countdownContainer');
+        const noDateMessage = document.getElementById('noDateMessage');
+
+        if (LAUNCH_DATE) {
+            countdownContainer.classList.add('active');
+            noDateMessage.style.display = 'none';
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = LAUNCH_DATE.getTime() - now;
+
+                if (distance < 0) {
+                    countdownContainer.innerHTML =
+                        '<div style="color:#4ade80;font-size:1.3rem;font-weight:700;">🎉 تم الإطلاق!</div>';
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = String(days).padStart(2, '0');
+                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        } else {
+            countdownContainer.classList.remove('active');
+            noDateMessage.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
