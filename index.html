@@ -3,164 +3,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Sonic Flash 2.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+    <title>Sonic Flash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
     <style>
         :root {
-            --bg: #000000;
-            --bg2: #111111;
-            --card: rgba(17, 17, 17, 0.8);
-            --elevated: rgba(25, 25, 25, 0.8);
-            --border: rgba(255, 255, 255, 0.08);
-            --primary: #4F7CFF;
-            --primary-hover: #6B95FF;
-            --accent: #00E5FF;
-            --accent-hover: #33EBFF;
+            --bg: #F8F9FA;
+            --surface: #FFFFFF;
+            --border: #E5E7EB;
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --accent: #06B6D4;
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
-            --text: #FFFFFF;
-            --text2: #A0A0A0;
-            --text3: #707070;
-            --grad: linear-gradient(135deg, #4F7CFF, #00E5FF);
+            --text: #1A1A2E;
+            --text2: #6B7280;
+            --text3: #9CA3AF;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
             --font: 'Cairo', sans-serif;
-            --font-ui: 'Inter', 'Cairo', sans-serif;
             --mono: 'Fira Code', 'Consolas', monospace;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
-            --glow-primary: 0 0 20px rgba(79, 124, 255, 0.4);
-            --glow-accent: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+        body.dark-mode {
+            --bg: #111827;
+            --surface: #1F2937;
+            --border: #374151;
+            --primary: #818CF8;
+            --primary-hover: #6366F1;
+            --text: #F9FAFB;
+            --text2: #D1D5DB;
+            --text3: #9CA3AF;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
         }
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:var(--font);background:var(--bg);color:var(--text);height:100dvh;overflow:hidden;display:flex;justify-content:center;align-items:center}
-        .app{width:100%;max-width:500px;height:100%;display:flex;flex-direction:column;background:var(--bg);position:relative;z-index:1;box-shadow:0 0 0 1px var(--border)}
-        @media(min-width:768px){body{background:#050505}.app{max-width:800px;height:90dvh;border-radius:24px;box-shadow:0 0 0 1px var(--border),0 20px 60px rgba(0,0,0,0.5);margin:0 20px}}
+        body{
+            font-family:var(--font);
+            background: linear-gradient(135deg, #F0F1F3 0%, #E8E9EC 100%);
+            color:var(--text);
+            height:100dvh;overflow:hidden;
+            display:flex;justify-content:center;align-items:center;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark-mode { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); }
+        .app{
+            width:100%;max-width:500px;height:100%;
+            display:flex;flex-direction:column;
+            background:var(--bg);
+            position:relative;z-index:1;
+            transition: background 0.3s;
+        }
+        @media(min-width:768px){
+            body{background:#E8E9EC}
+            body.dark-mode { background: #0F172A; }
+            .app{
+                max-width:750px;height:92dvh;
+                border-radius:20px;
+                box-shadow:0 0 0 1px var(--border),0 20px 50px rgba(0,0,0,0.08);
+                margin:0 20px;
+            }
+        }
 
-        .header{display:flex;align-items:center;padding:12px 16px;background:rgba(0,0,0,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);gap:12px;z-index:10;flex-shrink:0}
-        .logo-container{display:flex;align-items:center;gap:8px;cursor:pointer;flex:1}
-        .logo-icon{width:32px;height:32px;background:var(--grad);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;box-shadow:var(--glow-primary)}
-        .logo-text{font-weight:800;font-size:1.3rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .header{
+            display:flex;align-items:center;
+            padding:14px 18px;
+            background:var(--surface);
+            border-bottom:1px solid var(--border);
+            gap:12px;z-index:10;flex-shrink:0;
+            transition: background 0.3s;
+        }
+        .logo-container{display:flex;align-items:center;cursor:pointer;flex:1;}
+        .logo-text{font-weight:700;font-size:1.3rem;}
+        .logo-text .sonic { color: #10B981; }
+        .logo-text .flash { color: var(--text); }
+        .credit-badge{
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:20px;padding:5px 14px;
+            font-size:0.8rem;font-weight:600;
+            color:var(--text2);
+            display:flex;align-items:center;gap:8px;
+            cursor:pointer; transition: all 0.2s;
+        }
+        .credit-badge .credit-icon {
+            display: flex; align-items: center; justify-content: center;
+            width: 20px; height: 20px;
+            background: #10B981; border-radius: 5px;
+            color: #fff; font-size: 0.65rem;
+        }
+        .menu-btn{
+            width:32px;height:32px;border-radius:8px;
+            background:var(--surface);border:1px solid var(--border);
+            display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:15px;color:var(--text2);
+            transition:all 0.2s;
+        }
+        .menu-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
 
-        .token-indicator{background:var(--card);border-radius:14px;padding:6px 14px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);box-shadow:var(--shadow-sm);cursor:pointer;font-size:0.8rem;transition:all 0.3s;position:relative}
-        .token-indicator:hover{border-color:var(--accent);box-shadow:var(--glow-accent)}
-        .token-indicator i{color:var(--accent);font-size:0.9rem}
-        .token-details{display:flex;flex-direction:column;line-height:1.2}
-        .token-label{font-size:0.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
-        .token-value{font-weight:700;font-size:0.85rem;color:var(--text)}
-        .token-progress{position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(255,255,255,0.05);border-radius:0 0 14px 14px;overflow:hidden}
-        .token-progress-fill{height:100%;background:var(--grad);transition:width 0.5s ease;border-radius:0 0 14px 14px}
+        .content{
+            flex:1;overflow-y:auto;padding:18px;
+            scroll-behavior:smooth;
+        }
+        .content::-webkit-scrollbar{width:3px}
+        .content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+        .welcome-area{text-align:center;max-width:420px;margin:auto;animation:fadeUp 0.5s ease;}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .welcome-heading{font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+        .welcome-subtitle{color:var(--text2);font-size:0.85rem;margin-bottom:24px}
+        .suggestion-cards{display:flex;flex-direction:column;gap:10px;width:100%}
+        .suggestion-card{
+            display:flex;align-items:center;gap:12px;
+            padding:15px 18px;background:var(--surface);
+            border:1px solid var(--border);border-radius:14px;
+            cursor:pointer;transition:all 0.2s;
+            text-align:right;
+        }
+        .suggestion-card:hover{border-color:var(--primary);box-shadow:0 4px 12px rgba(79,70,229,0.08);}
+        .suggestion-icon{
+            width:38px;height:38px;border-radius:10px;
+            background:rgba(79,70,229,0.06);
+            display:flex;align-items:center;justify-content:center;
+            font-size:1rem;color:var(--primary);
+        }
 
-        .menu-btn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text2);transition:all 0.3s}
-        .menu-btn:hover{background:var(--primary);color:#fff;box-shadow:var(--glow-primary)}
-
-        .content{flex:1;overflow-y:auto;padding:16px;scroll-behavior:smooth}
-        .content::-webkit-scrollbar{width:4px}.content::-webkit-scrollbar-thumb{background:var(--primary);border-radius:2px}
-        .welcome-area{text-align:center;max-width:500px;margin:auto;animation:fadeUp 0.6s ease}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        .welcome-heading{font-size:1.8rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
-        .welcome-subtitle{color:var(--text2);font-size:0.9rem;margin-bottom:28px}
-        .suggestion-cards{display:flex;flex-direction:column;gap:12px;width:100%}
-        .suggestion-card{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--card);backdrop-filter:blur(15px);border:1px solid var(--border);border-radius:18px;cursor:pointer;transition:all 0.3s;box-shadow:var(--shadow-sm);text-align:right}
-        .suggestion-card:hover{border-color:var(--primary);box-shadow:0 8px 25px rgba(79,124,255,0.15);transform:translateY(-2px)}
-        .suggestion-icon{width:44px;height:44px;border-radius:14px;background:rgba(79,124,255,0.1);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--accent)}
-
-        .msg{margin-bottom:16px;animation:msgSlideIn 0.4s ease}
-        @keyframes msgSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        .msg{
+            margin-bottom:14px;
+            animation: msgSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes msgSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .user{text-align:left}
-        .user .bubble{background:var(--grad);color:#fff;padding:14px 18px;border-radius:20px 20px 6px 20px;max-width:85%;display:inline-block;font-size:0.9rem;line-height:1.6;box-shadow:0 6px 18px rgba(79,124,255,0.3)}
+        .user .bubble{
+            background:var(--primary);color:#fff;
+            padding:12px 16px;border-radius:18px 18px 4px 18px;
+            max-width:80%;display:inline-block;
+            font-size:0.9rem;line-height:1.6;
+            box-shadow: 0 4px 15px rgba(79,70,229,0.3);
+        }
         .ai{text-align:right}
-        .ai .bubble{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);padding:14px 18px;border-radius:20px 20px 20px 6px;max-width:85%;display:inline-block;font-size:0.9rem;line-height:1.6;color:var(--text);box-shadow:var(--shadow-sm)}
+        .ai .bubble{
+            background:var(--surface);border:1px solid var(--border);
+            padding:12px 16px;border-radius:18px 18px 18px 4px;
+            max-width:80%;display:inline-block;
+            font-size:0.9rem;line-height:1.6;color:var(--text);
+            box-shadow: var(--shadow-sm);
+        }
 
-        .streaming-cursor{display:inline-block;width:3px;height:1.2em;background:var(--accent);margin-right:2px;vertical-align:text-bottom;border-radius:2px;animation:cursorBlink 0.8s infinite;box-shadow:0 0 8px var(--accent),0 0 15px var(--accent)}
-        @keyframes cursorBlink{0%,50%{opacity:1}51%,100%{opacity:0}}
+        .thinking-dots-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 0;
+        }
+        .thinking-dot-item {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: bounceDot 1.2s infinite ease-in-out;
+            box-shadow: 0 0 8px rgba(79,70,229,0.5);
+        }
+        .thinking-dot-item:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-dot-item:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounceDot {
+            0%, 100% { transform: translateY(0); opacity: 0.3; }
+            50% { transform: translateY(-6px); opacity: 1; }
+        }
+        .thinking-label {
+            font-size: 0.85rem;
+            color: var(--text2);
+            margin-top: 4px;
+            text-align: center;
+        }
 
-        .thinking-container{display:flex;align-items:center;gap:12px;padding:10px 16px}
-        .morphing-orb{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg, var(--primary), var(--accent));box-shadow:0 0 25px rgba(79,124,255,0.6),0 0 40px rgba(0,229,255,0.3);animation:morphOrb 2s ease-in-out infinite}
-        @keyframes morphOrb{0%,100%{border-radius:50%;transform:scale(1)}25%{border-radius:40% 60% 60% 40%;transform:scale(1.1)}50%{border-radius:60% 40% 40% 60%;transform:scale(1.05)}75%{border-radius:40% 60% 60% 40%;transform:scale(1.1)}}
-        .thinking-text-pulse{font-size:0.9rem;color:var(--text2);animation:textPulse 1.5s ease-in-out infinite}
-        @keyframes textPulse{0%,100%{opacity:0.6}50%{opacity:1}}
+        .streaming-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background: var(--primary);
+            margin-right: 4px;
+            vertical-align: text-bottom;
+            border-radius: 2px;
+            animation: cursorBlink 0.8s infinite, cursorGlow 1.2s infinite;
+            box-shadow: 0 0 10px var(--primary);
+        }
+        @keyframes cursorBlink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+        @keyframes cursorGlow { 0%, 100% { box-shadow: 0 0 6px var(--primary); } 50% { box-shadow: 0 0 16px var(--accent); } }
 
-        .input-area{padding:16px 20px;background:transparent;flex-shrink:0}
-        .composer{background:var(--card);backdrop-filter:blur(25px);border-radius:32px;padding:16px 20px;border:1px solid var(--border);box-shadow:var(--shadow-md);transition:all 0.3s}
-        .composer:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,229,255,0.2),0 12px 30px rgba(0,0,0,0.4)}
-        .composer-textarea{width:100%;border:none;background:transparent;font-family:var(--font);font-size:1rem;color:var(--text);resize:none;outline:none;line-height:1.6;min-height:24px;max-height:120px;margin-bottom:14px;padding:0}
-        .composer-textarea::placeholder{color:var(--text3)}
-        .composer-bottom{display:flex;align-items:center;justify-content:space-between}
-        .model-pill{background:rgba(79,124,255,0.08);border:1px solid rgba(79,124,255,0.2);border-radius:24px;padding:6px 16px;font-size:0.8rem;font-weight:600;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s}
-        .model-pill:hover{background:var(--primary);color:#fff;box-shadow:var(--glow-primary)}
-        .actions-right{display:flex;align-items:center;gap:10px}
-        .mic-btn,.send-btn-new{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:var(--text2);transition:all 0.3s}
-        .mic-btn:hover{background:var(--accent);color:#000;border-color:var(--accent);box-shadow:var(--glow-accent)}
-        .mic-btn.listening{background:var(--danger);color:#fff;animation:pulse 1s infinite}
-        @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(239,68,68,0.6)}70%{box-shadow:0 0 0 15px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
-        .send-btn-new{background:var(--grad);color:#000;border:none;box-shadow:var(--glow-primary);display:none}
-        .send-btn-new:hover{box-shadow:0 0 25px rgba(79,124,255,0.7);transform:scale(1.05)}
-        .has-text .send-btn-new{display:flex}.has-text .mic-btn{display:none}
+        .input-area{padding:14px 18px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;transition: background 0.3s;}
+        .composer{
+            background:var(--bg);border-radius:24px;
+            padding:12px 16px;border:1px solid var(--border);
+            transition:all 0.2s;
+        }
+        .composer:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
+        .composer-textarea{
+            width:100%;border:none;background:transparent;font-family:var(--font);
+            font-size:0.95rem;color:var(--text);resize:none;outline:none;
+            line-height:1.5;min-height:22px;max-height:100px;
+            margin-bottom:8px;padding:0;
+        }
+        .composer-textarea::placeholder{color:var(--text3);}
+        .composer-bottom{display:flex;align-items:center;justify-content:space-between;}
+        .model-pill{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:18px;padding:5px 14px;
+            font-size:0.75rem;font-weight:600;
+            color:var(--text);cursor:pointer;
+            display:flex;align-items:center;gap:6px;
+            transition:all 0.2s;
+        }
+        .model-pill:hover{border-color:var(--primary);color:var(--primary);}
+        .actions-right{display:flex;align-items:center;gap:8px;}
+        .mic-btn,.send-btn-new{
+            width:38px;height:38px;border-radius:50%;
+            background:var(--surface);border:1px solid var(--border);
+            display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:1rem;color:var(--text2);
+            transition:all 0.2s;
+        }
+        .mic-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+        .mic-btn.listening{background:var(--danger);color:#fff;border-color:var(--danger);}
+        .send-btn-new{background:var(--primary);color:#fff;border:none;display:none;}
+        .send-btn-new:hover{background:var(--primary-hover);}
+        .has-text .send-btn-new{display:flex;}
+        .has-text .mic-btn{display:none;}
 
-        .sidebar{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:rgba(0,0,0,0.95);backdrop-filter:blur(40px);border-radius:24px 24px 0 0;transform:translateY(100%);transition:0.3s cubic-bezier(0.4,0,0.2,1);padding:28px 24px;max-height:65vh;overflow-y:auto;border:1px solid var(--border);box-shadow:0 -10px 40px rgba(0,0,0,0.6);max-width:450px;margin:0 auto}
-        @media(min-width:768px){.sidebar{max-width:800px}}
+        .sidebar{
+            position:fixed;bottom:0;left:0;right:0;z-index:1000;
+            background:var(--surface);border-radius:20px 20px 0 0;
+            transform:translateY(100%);transition:0.3s cubic-bezier(0.4,0,0.2,1);
+            padding:24px 20px;max-height:65vh;overflow-y:auto;
+            border:1px solid var(--border);box-shadow:0 -8px 30px rgba(0,0,0,0.06);
+            max-width:500px;margin:0 auto;
+        }
+        @media(min-width:768px){.sidebar{max-width:750px;}}
         .sidebar.open{transform:translateY(0)}
-        .sidebar h3{color:var(--text);text-align:center;margin-bottom:18px;font-weight:700;font-size:1.1rem}
-        .sidebar-item{padding:16px 20px;border-radius:16px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:16px;font-size:0.9rem;margin-bottom:4px;transition:all 0.3s}
-        .sidebar-item:hover{background:rgba(79,124,255,0.08);color:var(--primary)}
-        .sidebar-item i{color:var(--text2);width:20px;transition:0.3s}.sidebar-item:hover i{color:var(--accent)}
+        .sidebar h3{color:var(--text);text-align:center;margin-bottom:16px;font-weight:700;}
+        .sidebar-item{
+            padding:14px 18px;border-radius:12px;color:var(--text2);
+            cursor:pointer;display:flex;align-items:center;gap:14px;
+            font-size:0.9rem;margin-bottom:2px;transition:all 0.2s;
+        }
+        .sidebar-item:hover{background:rgba(79,70,229,0.05);color:var(--primary);}
 
-        .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:999;display:none}.overlay.show{display:block}
+        .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:999;display:none;}
+        .overlay.show{display:block}
 
-        .modal{position:fixed;bottom:0;left:0;right:0;z-index:1100;background:rgba(0,0,0,0.95);backdrop-filter:blur(40px);border-radius:24px 24px 0 0;transform:translateY(100%);transition:0.3s cubic-bezier(0.4,0,0.2,1);padding:28px 24px;max-height:75vh;overflow-y:auto;border:1px solid var(--border);box-shadow:0 -10px 40px rgba(0,0,0,0.6);max-width:450px;margin:0 auto}
-        @media(min-width:768px){.modal{max-width:800px}}
+        .modal{
+            position:fixed;bottom:0;left:0;right:0;z-index:1100;
+            background:var(--surface);border-radius:20px 20px 0 0;
+            transform:translateY(100%);transition:0.3s cubic-bezier(0.4,0,0.2,1);
+            padding:24px 20px;max-height:75vh;overflow-y:auto;
+            border:1px solid var(--border);box-shadow:0 -8px 30px rgba(0,0,0,0.06);
+            max-width:500px;margin:0 auto;
+        }
+        @media(min-width:768px){.modal{max-width:750px;}}
         .modal.show{transform:translateY(0)}
-        .modal h2{color:var(--text);text-align:center;margin-bottom:24px;font-weight:700;font-size:1.2rem}
-        .modal input,.modal select{width:100%;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);margin-bottom:12px;font-size:0.85rem;outline:none;font-family:var(--font);transition:border 0.3s}
-        .modal input:focus,.modal select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,229,255,0.2)}
-        .modal button{width:100%;padding:14px;background:var(--grad);border:none;border-radius:14px;color:#000;font-weight:700;cursor:pointer;margin-top:6px;font-size:0.9rem;transition:all 0.3s;box-shadow:var(--glow-primary)}
-        .modal button:hover{box-shadow:0 8px 25px rgba(79,124,255,0.5);transform:translateY(-1px)}
+        .modal h2{color:var(--text);text-align:center;margin-bottom:20px;font-weight:700;}
+        .modal input,.modal select{
+            width:100%;padding:12px 16px;background:var(--bg);
+            border:1px solid var(--border);border-radius:12px;
+            color:var(--text);margin-bottom:10px;font-size:0.9rem;
+            outline:none;font-family:var(--font);transition:border 0.2s;
+        }
+        .modal input:focus,.modal select:focus{border-color:var(--primary);}
+        .modal button{
+            width:100%;padding:12px;background:var(--primary);
+            border:none;border-radius:12px;color:#fff;font-weight:600;
+            cursor:pointer;margin-top:6px;font-size:0.9rem;transition:all 0.2s;
+        }
+        .modal button:hover{background:var(--primary-hover);}
 
-        .model-popup-overlay{position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+        .model-popup-overlay{position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,0.2);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;}
         .model-popup-overlay.show{display:flex}
-        .model-popup{font-family:var(--font-ui);background:rgba(0,0,0,0.95);backdrop-filter:blur(30px);border-radius:28px;padding:24px 20px;width:92%;max-width:360px;max-height:70vh;overflow-y:auto;border:1px solid var(--border);box-shadow:0 30px 60px rgba(0,0,0,0.6),0 0 40px rgba(79,124,255,0.1);color:#fff;animation:popIn 0.25s ease}
-        @keyframes popIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-        .model-popup h2{font-size:1.1rem;margin-bottom:20px;text-align:center}
-        .model-list{display:flex;flex-direction:column;gap:8px}
-        .model-card{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid transparent;border-radius:18px;padding:14px 16px;cursor:pointer;transition:all 0.3s;gap:10px}
-        .model-card:hover{background:rgba(79,124,255,0.08);border-color:rgba(79,124,255,0.3)}
-        .model-card.selected{background:rgba(79,124,255,0.12);border-color:rgba(79,124,255,0.4);box-shadow:0 0 20px rgba(79,124,255,0.2)}
-        .model-card .model-name{font-weight:700;font-size:1rem}
-        .model-card .model-desc{font-weight:500;font-size:0.75rem;color:rgba(255,255,255,0.5)}
-        .model-card .model-check{display:none;color:var(--accent);font-size:1.3rem}.model-card.selected .model-check{display:block}
-        .model-card .model-cost{font-weight:600;font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:4px}
-        .model-popup .close-btn{display:block;margin:20px auto 0;background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);padding:8px 20px;border-radius:24px;font-size:0.8rem;cursor:pointer;transition:all 0.3s}
-        .model-popup .close-btn:hover{background:rgba(255,255,255,0.08);color:#fff}
+        .model-popup{
+            background:rgba(255,255,255,0.8);
+            backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px);
+            border-radius:24px;padding:20px;
+            width:90%;max-width:320px;max-height:60vh;overflow-y:auto;
+            border:1px solid rgba(255,255,255,0.6);
+            box-shadow:0 25px 60px rgba(0,0,0,0.12);
+            animation: fadeSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        body.dark-mode .model-popup {
+            background: rgba(31, 41, 55, 0.85);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .model-popup h2{font-size:1rem;margin-bottom:16px;text-align:center;color:var(--text);}
+        .model-list{display:flex;flex-direction:column;gap:6px;}
+        .model-card{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:12px 14px;border-radius:14px;
+            border:1px solid rgba(0,0,0,0.06);
+            background:rgba(255,255,255,0.4);
+            cursor:pointer;
+            transition:all 0.25s;
+        }
+        .model-card:hover{background:rgba(79,70,229,0.06);border-color:rgba(79,70,229,0.2);}
+        .model-card.selected{border-color:var(--primary);background:rgba(79,70,229,0.08);}
+        .model-card .model-name{font-weight:600;font-size:0.9rem;color:var(--text);}
+        .model-card .model-cost{font-size:0.7rem;color:var(--text2);}
+        .model-popup .close-btn{
+            display:block;margin:14px auto 0;background:none;
+            border:none;color:var(--text2);cursor:pointer;
+            font-size:0.8rem;font-family:var(--font);
+        }
 
-        .code-container{margin:12px 0;border-radius:16px;overflow:hidden;background:#0A0A0A;border:1px solid var(--border);direction:ltr;box-shadow:0 4px 15px rgba(0,0,0,0.3)}
-        .code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(255,255,255,0.03);font-size:0.75rem;color:var(--text2);border-bottom:1px solid var(--border)}
-        .code-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);padding:4px 14px;border-radius:8px;font-size:0.7rem;cursor:pointer;transition:all 0.3s}
-        .code-btn:hover{background:var(--accent);color:#000;border-color:var(--accent)}
-        .code-btn.run-btn{background:var(--primary);color:#fff;border-color:var(--primary)}
-        .code-body{padding:16px;font-family:var(--mono);font-size:0.85rem;line-height:1.6;color:#D1D5DB}
-        #copyToast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);color:#fff;padding:10px 24px;border-radius:24px;font-size:0.85rem;z-index:999;display:none;border:1px solid var(--border)}
-        .register-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center}
-        .register-box{background:var(--card);border-radius:24px;padding:30px 24px;width:90%;max-width:380px;text-align:center;border:1px solid var(--border);box-shadow:0 20px 40px rgba(0,0,0,0.5)}
+        .code-container{
+            margin:10px 0;border-radius:12px;overflow:hidden;
+            background:#F8F9FA;border:1px solid var(--border);
+            direction:ltr;
+        }
+        .code-header{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:8px 14px;background:rgba(0,0,0,0.02);
+            font-size:0.7rem;color:var(--text2);
+            border-bottom:1px solid var(--border);
+        }
+        .code-btn{
+            background:var(--surface);border:1px solid var(--border);
+            color:var(--text2);padding:3px 10px;border-radius:6px;
+            font-size:0.65rem;cursor:pointer;transition:all 0.2s;
+        }
+        .code-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+        .code-btn.run-btn{background:var(--primary);color:#fff;border-color:var(--primary);}
+        .code-body{padding:12px;font-family:var(--mono);font-size:0.8rem;line-height:1.6;color:var(--text);}
+        #copyToast{
+            position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
+            background:var(--text);color:var(--bg);padding:8px 20px;border-radius:20px;
+            font-size:0.8rem;z-index:999;display:none;
+        }
+        .register-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;}
+        .register-box{background:var(--surface);border-radius:20px;padding:28px 24px;width:90%;max-width:360px;text-align:center;border:1px solid var(--border);}
     </style>
 </head>
 <body>
 <div class="app" id="app">
     <div class="header">
         <div class="logo-container" id="userAvatar" onclick="handleAvatarClick()">
-            <div class="logo-icon"><i class="fas fa-bolt"></i></div>
-            <div class="logo-text">Sonic Flash</div>
+            <div class="logo-text">
+                <span class="sonic">Sonic</span>
+                <span class="flash"> Flash</span>
+            </div>
         </div>
-        <div class="token-indicator" id="tokenIndicator" onclick="handleAvatarClick()">
-            <i class="fas fa-coins"></i>
-            <div class="token-details">
-                <span class="token-label">الرموز</span>
-                <span class="token-value" id="tokenDisplay">300 / 300</span>
-            </div>
-            <div class="token-progress">
-                <div class="token-progress-fill" id="tokenProgressFill" style="width:100%"></div>
-            </div>
+        <div class="credit-badge" onclick="handleAvatarClick()">
+            <span class="credit-icon">C</span>
+            <span id="miniTokens">300</span>
         </div>
         <div class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
     </div>
@@ -168,11 +367,11 @@
     <div class="content" id="chatArea">
         <div class="welcome-area" id="welcomeBox">
             <h1 class="welcome-heading">مرحباً، أنا Sonic Flash</h1>
-            <p class="welcome-subtitle">المساعد الذكي الأنيق. ابدأ محادثة أو اختر من الاقتراحات.</p>
+            <p class="welcome-subtitle">مساعد ذكي بسيط وسريع. ابدأ محادثة جديدة.</p>
             <div class="suggestion-cards">
-                <div class="suggestion-card" onclick="sendQuick('اقترح لي أفضل أماكن السفر لعام 2026')"><div class="suggestion-icon"><i class="fas fa-plane"></i></div><div><div style="font-weight:600;">السفر والسياحة</div><div style="font-size:0.75rem;color:var(--text2)">أفضل الوجهات</div></div></div>
-                <div class="suggestion-card" onclick="sendQuick('اكتب كود HTML بسيط')"><div class="suggestion-icon"><i class="fas fa-code"></i></div><div><div style="font-weight:600;">برمجة</div><div style="font-size:0.75rem;color:var(--text2)">أكواد جاهزة</div></div></div>
-                <div class="suggestion-card" onclick="sendQuick('من أنت؟')"><div class="suggestion-icon"><i class="fas fa-robot"></i></div><div><div style="font-weight:600;">تعرف عليّ</div><div style="font-size:0.75rem;color:var(--text2)">من صنعني؟</div></div></div>
+                <div class="suggestion-card" onclick="sendQuick('ما هي آخر أخبار التقنية؟')"><div class="suggestion-icon"><i class="fas fa-newspaper"></i></div><div><div style="font-weight:600;">أخبار التقنية</div><div style="font-size:0.75rem;color:var(--text2)">آخر المستجدات</div></div></div>
+                <div class="suggestion-card" onclick="sendQuick('اكتب لي كود HTML بسيط')"><div class="suggestion-icon"><i class="fas fa-code"></i></div><div><div style="font-weight:600;">برمجة</div><div style="font-size:0.75rem;color:var(--text2)">أكواد جاهزة</div></div></div>
+                <div class="suggestion-card" onclick="sendQuick('اشرح لي مفهوم الذكاء الاصطناعي')"><div class="suggestion-icon"><i class="fas fa-robot"></i></div><div><div style="font-weight:600;">تعلم</div><div style="font-size:0.75rem;color:var(--text2)">الذكاء الاصطناعي</div></div></div>
             </div>
         </div>
         <div id="messages"></div>
@@ -183,7 +382,7 @@
             <textarea id="userInput" class="composer-textarea" placeholder="اكتب رسالتك..." rows="1" oninput="autoResize(); toggleSendButton();" onkeypress="handleEnter(event)"></textarea>
             <div class="composer-bottom">
                 <div class="model-pill" id="modelPill" onclick="openModelPopup()">
-                    <span id="pillModelName">Sonic Flash 1.1</span>
+                    <span id="pillModelName">Sonic Flash</span>
                     <i class="fas fa-chevron-down" style="font-size:0.5rem;"></i>
                 </div>
                 <div class="actions-right">
@@ -198,9 +397,9 @@
 <div class="sidebar" id="sidebar">
     <h3>القائمة</h3>
     <div class="sidebar-item" onclick="newChat()"><i class="fas fa-plus-circle"></i> محادثة جديدة</div>
-    <div style="max-height:35vh; overflow-y:auto; margin-bottom:8px;" id="sidebarConversations"></div>
+    <div style="max-height:35vh;overflow-y:auto;margin-bottom:8px;" id="sidebarConversations"></div>
     <div class="sidebar-item" onclick="openSettingsModal()"><i class="fas fa-cog"></i> الإعدادات</div>
-    <div class="sidebar-item danger" onclick="deleteAllConversations()"><i class="fas fa-trash-alt"></i> حذف جميع المحادثات</div>
+    <div class="sidebar-item" style="color:var(--danger);" onclick="deleteAllConversations()"><i class="fas fa-trash-alt" style="color:var(--danger);"></i> حذف جميع المحادثات</div>
 </div>
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
@@ -208,31 +407,32 @@
     <h2>لوحة الإدارة</h2>
     <div id="adminLogin"><input type="password" id="adminPass" placeholder="كلمة المرور"><button onclick="adminLogin()">دخول</button></div>
     <div id="adminPanel" style="display:none;">
-        <label style="color:var(--text2);font-size:0.8rem;">نوع العملية</label>
         <select id="adminAction">
-            <option value="addSelf">إضافة رموز (لحسابي)</option>
-            <option value="deductSelf">خصم رموز (من حسابي)</option>
-            <option value="sendToUser">إرسال رموز لمستخدم</option>
-            <option value="deductFromUser">خصم رموز من مستخدم</option>
+            <option value="addSelf">إضافة رموز</option>
+            <option value="deductSelf">خصم رموز</option>
+            <option value="sendToUser">إرسال لمستخدم</option>
             <option value="banUser">حظر مستخدم</option>
-            <option value="setDaily">تحديد الرموز اليومية</option>
-            <option value="setPeriod">تغيير مدة التجديد (ساعات)</option>
-            <option value="resetSelf">إعادة تعيين رموزي</option>
+            <option value="resetSelf">إعادة تعيين</option>
         </select>
-        <input type="text" id="targetUserId" placeholder="معرف المستخدم (للإرسال/الخصم/الحظر)">
+        <input type="text" id="targetUserId" placeholder="معرف المستخدم">
         <input type="number" id="adminAmount" placeholder="المبلغ" value="10">
         <button onclick="adminUpdateTokens()">تنفيذ</button>
         <div id="adminMsg" style="font-size:0.8rem;margin-top:8px;color:var(--text2);"></div>
     </div>
-    <button style="background:transparent; border:1px solid var(--border); color:var(--text2); margin-top:14px; font-weight:600;" onclick="closeAdminModal()">إغلاق</button>
+    <button style="background:transparent;border:1px solid var(--border);color:var(--text2);margin-top:12px;font-weight:600;" onclick="closeAdminModal()">إغلاق</button>
 </div>
 
 <div class="modal" id="settingsModal">
     <h2>الإعدادات</h2>
-    <div style="display:flex; flex-direction:column; gap:14px;">
-        <div style="color:var(--text2); font-size:0.9rem;">معرف الحساب: <span id="accountId" style="color:var(--accent); font-weight:600;"></span></div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="color:var(--text2); font-size:0.9rem;">معرف الحساب: <span id="accountId" style="color:var(--primary); font-weight:600;"></span></div>
+        <label style="color:var(--text2); font-size:0.85rem;">المظهر</label>
+        <select id="themeSelect" onchange="toggleTheme(this.value)">
+            <option value="light">فاتح</option>
+            <option value="dark">داكن</option>
+        </select>
     </div>
-    <button style="background:transparent; border:1px solid var(--border); color:var(--text2); margin-top:16px; font-weight:600;" onclick="closeSettingsModal()">إغلاق</button>
+    <button style="background:transparent; border:1px solid var(--border); color:var(--text2); margin-top:14px; font-weight:600;" onclick="closeSettingsModal()">إغلاق</button>
 </div>
 
 <div class="model-popup-overlay" id="modelPopupOverlay">
@@ -250,22 +450,34 @@
         <input type="text" id="regFirstName" placeholder="الاسم الأول">
         <input type="text" id="regLastName" placeholder="الاسم الثاني">
         <input type="password" id="regPassword" placeholder="كلمة المرور">
-        <button onclick="registerUser()" style="background:var(--grad); color:#000; border:none; width:100%; padding:16px; border-radius:16px; font-weight:700; cursor:pointer; margin-top:8px;">تسجيل</button>
+        <button onclick="registerUser()" style="background:var(--primary); color:#fff; border:none; width:100%; padding:12px; border-radius:12px; font-weight:600; cursor:pointer; margin-top:8px;">تسجيل</button>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <script>
+    function toggleTheme(mode) {
+        if (mode === 'dark') {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('sf_theme', 'dark');
+        } else {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('sf_theme', 'light');
+        }
+    }
+    (function() {
+        if (localStorage.getItem('sf_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (document.getElementById('themeSelect')) document.getElementById('themeSelect').value = 'dark';
+        }
+    })();
+
     const GROQ_KEY = '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';
     const OR_KEY = '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';
 
-    const TOKEN_CONFIG = {
-        defaultDaily: parseInt(localStorage.getItem('sf_token_daily')) || 300,
-        resetPeriodHours: parseInt(localStorage.getItem('sf_token_period')) || 24,
-    };
-
-    // Banned users list
+    const TOKEN_DAILY = parseInt(localStorage.getItem('sf_token_daily')) || 300;
+    const TOKEN_PERIOD = parseInt(localStorage.getItem('sf_token_period')) || 24;
     const bannedUsers = JSON.parse(localStorage.getItem('sf_banned_users') || '[]');
 
     let userAccount = JSON.parse(localStorage.getItem('sf_user'));
@@ -273,87 +485,58 @@
         document.getElementById('registerOverlay').style.display = 'flex';
         document.getElementById('app').style.pointerEvents = 'none';
     } else {
-        // Check if banned
         if (bannedUsers.includes(userAccount.accountId)) {
-            document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#EF4444;font-size:1.5rem;">لقد تم حظر حسابك من قبل الإدارة.</div>';
+            document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#EF4444;font-size:1.3rem;">تم حظر حسابك.</div>';
             throw new Error('User banned');
         }
         document.getElementById('registerOverlay').style.display = 'none';
-        if (typeof userAccount.tokens === 'undefined') {
-            userAccount.tokens = TOKEN_CONFIG.defaultDaily;
+        if (!userAccount.tokens) {
+            userAccount.tokens = TOKEN_DAILY;
             userAccount.usedTokens = 0;
             userAccount.lastReset = Date.now();
-            userAccount.nextReset = Date.now() + (TOKEN_CONFIG.resetPeriodHours * 3600000);
+            userAccount.nextReset = Date.now() + TOKEN_PERIOD * 3600000;
             localStorage.setItem('sf_user', JSON.stringify(userAccount));
         }
     }
 
     function registerUser() {
-        const firstName = document.getElementById('regFirstName').value.trim();
-        const lastName = document.getElementById('regLastName').value.trim();
-        const password = document.getElementById('regPassword').value.trim();
-        if (!firstName || !lastName || !password) { alert('الرجاء ملء جميع الحقول'); return; }
-        userAccount = {
-            firstName, lastName, password,
-            accountId: 'SF-' + Date.now().toString(36).toUpperCase(),
-            createdAt: Date.now(),
-            tokens: TOKEN_CONFIG.defaultDaily,
-            usedTokens: 0,
-            lastReset: Date.now(),
-            nextReset: Date.now() + (TOKEN_CONFIG.resetPeriodHours * 3600000)
-        };
+        const f = document.getElementById('regFirstName').value.trim();
+        const l = document.getElementById('regLastName').value.trim();
+        const p = document.getElementById('regPassword').value.trim();
+        if (!f || !l || !p) { alert('املأ جميع الحقول'); return; }
+        userAccount = { firstName: f, lastName: l, password: p, accountId: 'SF-' + Date.now().toString(36).toUpperCase(), createdAt: Date.now(), tokens: TOKEN_DAILY, usedTokens: 0, lastReset: Date.now(), nextReset: Date.now() + TOKEN_PERIOD * 3600000 };
         localStorage.setItem('sf_user', JSON.stringify(userAccount));
         document.getElementById('registerOverlay').style.display = 'none';
         document.getElementById('app').style.pointerEvents = 'auto';
         updateTokenUI();
-        subscribeToTransfers();
-        subscribeToCommands();
+        subscribeMQTT();
     }
 
-    function checkTokenReset() {
+    function checkReset() {
         if (Date.now() >= userAccount.nextReset) {
-            userAccount.tokens = TOKEN_CONFIG.defaultDaily;
+            userAccount.tokens = TOKEN_DAILY;
             userAccount.usedTokens = 0;
             userAccount.lastReset = Date.now();
-            userAccount.nextReset = Date.now() + (TOKEN_CONFIG.resetPeriodHours * 3600000);
+            userAccount.nextReset = Date.now() + TOKEN_PERIOD * 3600000;
             localStorage.setItem('sf_user', JSON.stringify(userAccount));
         }
-    }
-
-    function deductTokens(amount) {
-        if (userAccount.tokens >= amount) {
-            userAccount.tokens -= amount;
-            userAccount.usedTokens += amount;
-            localStorage.setItem('sf_user', JSON.stringify(userAccount));
-            updateTokenUI();
-            return true;
-        }
-        return false;
     }
 
     function updateTokenUI() {
-        const remaining = userAccount.tokens;
-        const total = TOKEN_CONFIG.defaultDaily;
-        const percent = (remaining / total) * 100;
-        document.getElementById('tokenDisplay').textContent = `${formatNumber(Math.max(0, remaining))} / ${formatNumber(total)}`;
-        const progressFill = document.getElementById('tokenProgressFill');
-        progressFill.style.width = Math.max(0, percent) + '%';
-        if (percent < 15) progressFill.style.background = '#EF4444';
-        else if (percent < 40) progressFill.style.background = '#F59E0B';
-        else progressFill.style.background = 'var(--grad)';
+        document.getElementById('miniTokens').textContent = userAccount.tokens;
     }
 
-    function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function deduct(amount) {
+        if (userAccount.tokens >= amount) { userAccount.tokens -= amount; userAccount.usedTokens += amount; localStorage.setItem('sf_user', JSON.stringify(userAccount)); updateTokenUI(); return true; }
+        return false;
+    }
 
     const state = {
         currentModel: localStorage.getItem('sf_currentModel') || 'sonic-flash',
         models: [
-            { id: 'sonic-lite', name: 'Sonic Lite 1.4', desc: 'مجاني، للمحادثات اليومية.', cost: 5, min: 0, provider: 'groq', modelName: 'llama-3.3-70b-versatile', systemPrompt: 'أنت Sonic Lite، مساعد مفيد.' },
-            { id: 'sonic-pro', name: 'Sonic Pro 1.5', desc: 'أداء أفضل في البرمجة.', cost: 10, min: 0, provider: 'groq', modelName: 'llama-3.3-70b-versatile', systemPrompt: 'أنت Sonic Pro، مساعد تقني.' },
-            { id: 'sonic-max', name: 'Sonic Max 1.6', desc: 'قدرات تحليلية متقدمة.', cost: 25, min: 25, provider: 'groq', modelName: 'llama-3.3-70b-versatile', systemPrompt: 'أنت Sonic Max، محلل متقدم.' },
-            { id: 'sonic-origin', name: 'Sonic Origin 1.7', desc: 'الأقوى للأعمال الاحترافية.', cost: 25, min: 25, provider: 'groq', modelName: 'llama-3.3-70b-versatile', systemPrompt: 'أنت Sonic Origin، نموذج متطور.' },
-            { id: 'sonic-flash', name: 'Sonic Flash 1.1', desc: 'الرائد DeepSeek. ذكاء فائق.', cost: 25, min: 25, provider: 'openrouter', modelName: 'deepseek/deepseek-chat', systemPrompt: 'أنت Sonic Flash، نموذج ذكي جداً يتحدث العربية بطلاقة. تفهم الأسئلة بعمق وتجيب بدقة.' },
-            { id: 'sonic-ultra', name: 'Sonic Ultra 2.0', desc: 'سياق 1M توكن.', cost: 50, min: 50, provider: 'openrouter', modelName: 'north-mini-code:free', systemPrompt: 'أنت Sonic Ultra، النموذج الأذكى.' }
+            { id: 'sonic-lite', name: 'Sonic Lite 1.4', cost: 5, min: 0, provider: 'groq', modelName: 'llama-3.3-70b-versatile', prompt: 'أنت Sonic Lite، مساعد بسيط ومفيد.' },
+            { id: 'sonic-flash', name: 'Sonic Flash 1.1', cost: 25, min: 25, provider: 'openrouter', modelName: 'deepseek/deepseek-chat', prompt: 'أنت Sonic Flash، نموذج DeepSeek الذكي.' },
+            { id: 'sonic-ultra', name: 'Sonic Ultra 2.0', cost: 50, min: 50, provider: 'openrouter', modelName: 'north-mini-code:free', prompt: 'أنت Sonic Ultra، نموذج متطور جداً.' }
         ],
         mqttClient: null,
         currentConversationId: null,
@@ -361,306 +544,186 @@
     };
 
     let conversations = JSON.parse(localStorage.getItem('sf_conversations') || '[]');
-
     function getConv() { return conversations.find(c => c.id === state.currentConversationId); }
     function saveConvs() { localStorage.setItem('sf_conversations', JSON.stringify(conversations)); updateSidebarHistory(); }
-    function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
+    function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
 
     const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt');
-    client.on('connect', () => { state.mqttClient = client; if (userAccount) { subscribeToTransfers(); subscribeToCommands(); } });
-    function publishMQTT(topic, msg) { if (state.mqttClient?.connected) state.mqttClient.publish(topic, JSON.stringify(msg)); }
-    function subscribeToTransfers() {
+    client.on('connect', () => { state.mqttClient = client; if (userAccount) subscribeMQTT(); });
+    function publishMQTT(t, m) { if (state.mqttClient?.connected) state.mqttClient.publish(t, JSON.stringify(m)); }
+    function subscribeMQTT() {
         if (!state.mqttClient || !userAccount) return;
         state.mqttClient.subscribe('sonicflash/transfer/' + userAccount.accountId);
-        state.mqttClient.on('message', (topic, message) => {
-            if (topic === 'sonicflash/transfer/' + userAccount.accountId) {
-                const data = JSON.parse(message.toString());
-                if (data.amount > 0) {
-                    userAccount.tokens = Math.min(userAccount.tokens + data.amount, 999999);
-                    localStorage.setItem('sf_user', JSON.stringify(userAccount));
-                    updateTokenUI();
-                    // Custom gift message
-                    if (data.from === 'admin') {
-                        showToast(`🎁 لقد أرسل إليك المشرف هدية بقيمة ${data.amount} Credit. استمتع بها!`);
-                    } else {
-                        showToast(`تم استلام ${data.amount} رمز من ${data.from}`);
-                    }
-                }
-            }
-        });
-    }
-
-    function subscribeToCommands() {
-        if (!state.mqttClient || !userAccount) return;
         state.mqttClient.subscribe('sonicflash/cmd/' + userAccount.accountId);
         state.mqttClient.on('message', (topic, message) => {
-            if (topic === 'sonicflash/cmd/' + userAccount.accountId) {
-                const data = JSON.parse(message.toString());
+            const data = JSON.parse(message.toString());
+            if (topic === 'sonicflash/transfer/' + userAccount.accountId && data.amount > 0) {
+                userAccount.tokens += data.amount;
+                localStorage.setItem('sf_user', JSON.stringify(userAccount));
+                updateTokenUI();
+                showToast(`🎁 هدية ${data.amount} رمز من ${data.from === 'admin' ? 'الإدارة' : data.from}!`);
+            } else if (topic === 'sonicflash/cmd/' + userAccount.accountId) {
                 if (data.action === 'deduct') {
-                    if (userAccount.tokens >= data.amount) {
-                        userAccount.tokens -= data.amount;
-                        localStorage.setItem('sf_user', JSON.stringify(userAccount));
-                        updateTokenUI();
-                        showToast(`تم خصم ${data.amount} رمز من حسابك بقرار من الإدارة.`);
-                    } else {
-                        showToast('لا توجد رموز كافية للخصم.');
-                    }
+                    if (userAccount.tokens >= data.amount) { userAccount.tokens -= data.amount; localStorage.setItem('sf_user', JSON.stringify(userAccount)); updateTokenUI(); showToast(`تم خصم ${data.amount} رمز.`); }
                 } else if (data.action === 'ban') {
-                    // Immediately ban the user
-                    const banned = JSON.parse(localStorage.getItem('sf_banned_users') || '[]');
-                    if (!banned.includes(userAccount.accountId)) {
-                        banned.push(userAccount.accountId);
-                        localStorage.setItem('sf_banned_users', JSON.stringify(banned));
-                    }
-                    alert('لقد تم حظر حسابك من قبل الإدارة.');
-                    location.reload();
+                    const b = JSON.parse(localStorage.getItem('sf_banned_users') || '[]');
+                    if (!b.includes(userAccount.accountId)) { b.push(userAccount.accountId); localStorage.setItem('sf_banned_users', JSON.stringify(b)); }
+                    alert('تم حظرك.'); location.reload();
                 }
             }
         });
     }
 
-    let adminClicks = 0; let adminTimeout;
-    function handleAvatarClick() {
-        adminClicks++;
-        if (adminClicks === 3) { clearTimeout(adminTimeout); adminClicks = 0; openAdminModal(); }
-        else { clearTimeout(adminTimeout); adminTimeout = setTimeout(() => adminClicks = 0, 800); }
-    }
+    let adminClicks = 0, adminTimer;
+    function handleAvatarClick() { adminClicks++; if (adminClicks === 3) { clearTimeout(adminTimer); adminClicks = 0; openAdminModal(); } else { clearTimeout(adminTimer); adminTimer = setTimeout(() => adminClicks = 0, 800); } }
 
-    function adminLogin() {
-        if (document.getElementById('adminPass').value === 'admin112233') {
-            document.getElementById('adminLogin').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-        } else alert('كلمة مرور خاطئة');
-    }
-
+    function adminLogin() { if (document.getElementById('adminPass').value === 'admin112233') { document.getElementById('adminLogin').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block'; } else alert('خطأ'); }
     function adminUpdateTokens() {
-        const action = document.getElementById('adminAction').value;
-        const amount = parseInt(document.getElementById('adminAmount').value) || 0;
-        const targetId = document.getElementById('targetUserId').value.trim();
-        const msgEl = document.getElementById('adminMsg');
-
-        switch(action) {
-            case 'addSelf':
-                userAccount.tokens += amount;
-                localStorage.setItem('sf_user', JSON.stringify(userAccount));
-                updateTokenUI();
-                msgEl.textContent = `تم إضافة ${amount} رمز إلى حسابك.`;
-                break;
-            case 'deductSelf':
-                if (userAccount.tokens >= amount) {
-                    userAccount.tokens -= amount;
-                    localStorage.setItem('sf_user', JSON.stringify(userAccount));
-                    updateTokenUI();
-                    msgEl.textContent = `تم خصم ${amount} رمز من حسابك.`;
-                } else {
-                    alert('رموز غير كافية');
-                    return;
-                }
-                break;
-            case 'sendToUser':
-                if (!targetId) { alert('أدخل معرف المستخدم'); return; }
-                publishMQTT('sonicflash/transfer/' + targetId, { from: 'admin', amount });
-                msgEl.textContent = `تم إرسال ${amount} رمز إلى ${targetId}.`;
-                break;
-            case 'deductFromUser':
-                if (!targetId) { alert('أدخل معرف المستخدم'); return; }
-                publishMQTT('sonicflash/cmd/' + targetId, { action: 'deduct', amount });
-                msgEl.textContent = `تم إرسال أمر خصم ${amount} رمز إلى ${targetId}.`;
-                break;
-            case 'banUser':
-                if (!targetId) { alert('أدخل معرف المستخدم'); return; }
-                publishMQTT('sonicflash/cmd/' + targetId, { action: 'ban' });
-                // Also add to local banned list for future logins
-                const banned = JSON.parse(localStorage.getItem('sf_banned_users') || '[]');
-                if (!banned.includes(targetId)) {
-                    banned.push(targetId);
-                    localStorage.setItem('sf_banned_users', JSON.stringify(banned));
-                }
-                msgEl.textContent = `تم حظر المستخدم ${targetId}.`;
-                break;
-            case 'setDaily':
-                TOKEN_CONFIG.defaultDaily = amount;
-                localStorage.setItem('sf_token_daily', amount);
-                msgEl.textContent = `تم تحديد الرموز اليومية: ${amount}`;
-                break;
-            case 'setPeriod':
-                TOKEN_CONFIG.resetPeriodHours = amount;
-                localStorage.setItem('sf_token_period', amount);
-                userAccount.nextReset = Date.now() + (amount * 3600000);
-                localStorage.setItem('sf_user', JSON.stringify(userAccount));
-                msgEl.textContent = `تم تغيير مدة التجديد إلى ${amount} ساعة`;
-                break;
-            case 'resetSelf':
-                userAccount.tokens = TOKEN_CONFIG.defaultDaily;
-                userAccount.usedTokens = 0;
-                userAccount.lastReset = Date.now();
-                userAccount.nextReset = Date.now() + (TOKEN_CONFIG.resetPeriodHours * 3600000);
-                localStorage.setItem('sf_user', JSON.stringify(userAccount));
-                updateTokenUI();
-                msgEl.textContent = 'تم إعادة تعيين رموزك.';
-                break;
-        }
+        const a = document.getElementById('adminAction').value;
+        const amt = parseInt(document.getElementById('adminAmount').value) || 0;
+        const tid = document.getElementById('targetUserId').value.trim();
+        const msg = document.getElementById('adminMsg');
+        if (a === 'addSelf') { userAccount.tokens += amt; msg.textContent = `تمت إضافة ${amt} رمز.`; }
+        else if (a === 'deductSelf') { if (userAccount.tokens >= amt) { userAccount.tokens -= amt; msg.textContent = `تم خصم ${amt} رمز.`; } else { alert('رصيد غير كاف'); return; } }
+        else if (a === 'sendToUser') { if (!tid) { alert('أدخل المعرف'); return; } publishMQTT('sonicflash/transfer/' + tid, { from: 'admin', amount: amt }); msg.textContent = `تم إرسال ${amt} رمز.`; }
+        else if (a === 'banUser') { if (!tid) { alert('أدخل المعرف'); return; } publishMQTT('sonicflash/cmd/' + tid, { action: 'ban' }); const b = JSON.parse(localStorage.getItem('sf_banned_users') || '[]'); if (!b.includes(tid)) { b.push(tid); localStorage.setItem('sf_banned_users', JSON.stringify(b)); } msg.textContent = `تم حظر ${tid}.`; }
+        else if (a === 'resetSelf') { userAccount.tokens = TOKEN_DAILY; userAccount.usedTokens = 0; userAccount.lastReset = Date.now(); userAccount.nextReset = Date.now() + TOKEN_PERIOD * 3600000; msg.textContent = 'تمت إعادة التعيين.'; }
+        localStorage.setItem('sf_user', JSON.stringify(userAccount));
+        updateTokenUI();
     }
 
     let recognition;
     function toggleSpeech() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) { alert('المتصفح لا يدعم الميكروفون'); return; }
-        if (!recognition) {
-            recognition = new SpeechRecognition();
-            recognition.lang = 'ar-SA'; recognition.interimResults = false;
-            recognition.onresult = (e) => { document.getElementById('userInput').value = e.results[0][0].transcript; autoResize(); toggleSendButton(); };
-            recognition.onend = () => document.getElementById('micBtn').classList.remove('listening');
-        }
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) { alert('غير مدعوم'); return; }
+        if (!recognition) { recognition = new SR(); recognition.lang = 'ar-SA'; recognition.interimResults = false; recognition.onresult = e => { document.getElementById('userInput').value = e.results[0][0].transcript; autoResize(); toggleSendButton(); }; recognition.onend = () => document.getElementById('micBtn').classList.remove('listening'); }
         if (recognition.listening) { recognition.stop(); document.getElementById('micBtn').classList.remove('listening'); }
         else { recognition.start(); document.getElementById('micBtn').classList.add('listening'); }
     }
 
     function renderModels() {
-        const list = document.getElementById('modelList');
-        list.innerHTML = state.models.map(m => {
+        document.getElementById('modelList').innerHTML = state.models.map(m => {
             const isSelected = state.currentModel === m.id;
+            const costText = m.cost > 0 ? `${m.cost} رمز` : 'مجاني';
             return `
                 <div class="model-card ${isSelected ? 'selected' : ''}" onclick="selectModel('${m.id}')">
-                    <div>
-                        <div class="model-name">${m.name}</div>
-                        <div class="model-desc">${m.desc}</div>
-                        <div class="model-cost">⚡ ${m.cost} Tokens</div>
-                    </div>
-                    <i class="fas fa-check-circle model-check"></i>
+                    <span class="model-name">${m.name}</span>
+                    <span class="model-cost">${costText}</span>
                 </div>`;
         }).join('');
     }
-    function selectModel(id, close=true) {
+    function selectModel(id, close = true) {
         const m = state.models.find(x => x.id === id);
         if (!m) return;
         if (userAccount.tokens < m.min) { alert('رموز غير كافية'); return; }
         state.currentModel = id;
         localStorage.setItem('sf_currentModel', id);
-        document.getElementById('pillModelName').textContent = m.name;
+        document.getElementById('pillModelName').textContent = m.name.split(' ')[0];
         renderModels();
         if (close) closeModelPopup();
     }
 
     function updateSidebarHistory() {
-        const container = document.getElementById('sidebarConversations');
-        if (!container) return;
-        container.innerHTML = conversations.slice(0, 8).map(c => `
-            <div class="sidebar-item" onclick="loadConv('${c.id}'); toggleSidebar();" style="font-size:0.8rem;">
-                <span>${c.title}</span>
-                <span style="margin-right:auto;font-size:0.65rem;color:var(--text3)">${new Date(c.timestamp).toLocaleDateString()}</span>
-            </div>`).join('');
-    }
-    function newChat() {
-        state.currentConversationId = generateId();
-        conversations.unshift({ id: state.currentConversationId, title: 'محادثة جديدة', messages: [], timestamp: Date.now() });
-        saveConvs();
-        document.getElementById('messages').innerHTML = '';
-        document.getElementById('welcomeBox').style.display = 'block';
-    }
-    function loadConv(id) {
-        const c = conversations.find(x => x.id === id);
+        const c = document.getElementById('sidebarConversations');
         if (!c) return;
-        state.currentConversationId = id;
-        document.getElementById('messages').innerHTML = '';
-        document.getElementById('welcomeBox').style.display = 'none';
-        c.messages.forEach(m => appendMsg(m.role, m.content));
+        c.innerHTML = conversations.slice(0, 8).map(cv => `<div class="sidebar-item" onclick="loadConv('${cv.id}');toggleSidebar();" style="font-size:0.8rem;"><span>${cv.title}</span><span style="margin-right:auto;font-size:0.65rem;color:var(--text3)">${new Date(cv.timestamp).toLocaleDateString()}</span></div>`).join('');
     }
+    function newChat() { state.currentConversationId = genId(); conversations.unshift({ id: state.currentConversationId, title: 'محادثة جديدة', messages: [], timestamp: Date.now() }); saveConvs(); document.getElementById('messages').innerHTML = ''; document.getElementById('welcomeBox').style.display = 'block'; }
+    function loadConv(id) { const c = conversations.find(x => x.id === id); if (!c) return; state.currentConversationId = id; document.getElementById('messages').innerHTML = ''; document.getElementById('welcomeBox').style.display = 'none'; c.messages.forEach(m => appendMsg(m.role, m.content)); }
 
     function autoResize() { const t = document.getElementById('userInput'); t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
-    function toggleSendButton() {
-        const hasText = document.getElementById('userInput').value.trim().length > 0;
-        document.getElementById('composer').classList.toggle('has-text', hasText);
-    }
+    function toggleSendButton() { document.getElementById('composer').classList.toggle('has-text', document.getElementById('userInput').value.trim().length > 0); }
     function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(document.getElementById('userInput').value); } }
     function sendQuick(t) { document.getElementById('userInput').value = t; autoResize(); toggleSendButton(); sendMsg(t); }
 
     async function sendMsg(text) {
         if (!text || state.isTyping) return;
-        checkTokenReset();
+        checkReset();
         const model = state.models.find(m => m.id === state.currentModel);
-        if (userAccount.tokens < 1) { alert('لا توجد رموز كافية. انتظر التجديد.'); return; }
+        if (userAccount.tokens < 1) { alert('لا توجد رموز كافية.'); return; }
         document.getElementById('userInput').value = ''; autoResize(); toggleSendButton();
         if (!state.currentConversationId) newChat();
         const conv = getConv();
         conv.messages.push({ role: 'user', content: text });
-        if (conv.messages.length === 1) conv.title = text.substring(0, 20);
+        if (conv.messages.length === 1) conv.title = text.substring(0, 25);
         saveConvs();
         appendMsg('user', text);
         state.isTyping = true;
 
-        const thinkingEl = document.createElement('div'); thinkingEl.className = 'msg ai';
-        thinkingEl.innerHTML = `<div class="bubble" style="background:transparent;border:none;box-shadow:none"><div class="thinking-container"><div class="morphing-orb"></div><span class="thinking-text-pulse">يفكر...</span></div></div>`;
-        document.getElementById('messages').appendChild(thinkingEl);
+        const thinkEl = document.createElement('div'); thinkEl.className = 'msg ai';
+        thinkEl.innerHTML = `
+            <div class="bubble" style="background:transparent; border:none; box-shadow:none;">
+                <div class="thinking-dots-container">
+                    <span class="thinking-dot-item"></span>
+                    <span class="thinking-dot-item"></span>
+                    <span class="thinking-dot-item"></span>
+                </div>
+                <div class="thinking-label">يفكر...</div>
+            </div>`;
+        document.getElementById('messages').appendChild(thinkEl);
         scrollBottom();
 
         try {
             const reply = await getAI(text);
-            thinkingEl.remove();
-            const tokenCost = Math.ceil((text.length + reply.length) / 4);
-            deductTokens(tokenCost);
-            await streamMessage(document.getElementById('messages'), reply, 'ai', conv);
-        } catch(e) {
-            thinkingEl.remove();
-            appendMsg('ai', `❌ خطأ: ${e.message}`);
-            state.isTyping = false;
+            thinkEl.remove();
+            const cost = Math.ceil((text.length + reply.length) / 4);
+            deduct(cost);
+            streamMessage(reply);
+            conv.messages.push({ role: 'ai', content: reply });
+            saveConvs();
+        } catch (e) {
+            thinkEl.remove();
+            appendMsg('ai', `خطأ: ${e.message}`);
         }
+        state.isTyping = false;
     }
 
-    function streamMessage(container, fullText, role, conv) {
-        return new Promise((resolve) => {
-            const msgDiv = document.createElement('div'); msgDiv.className = `msg ${role}`;
-            const bubble = document.createElement('div'); bubble.className = 'bubble';
-            msgDiv.appendChild(bubble); container.appendChild(msgDiv);
-            scrollBottom();
-            document.getElementById('welcomeBox').style.display = 'none';
+    function streamMessage(fullText) {
+        const msgDiv = document.createElement('div'); msgDiv.className = 'msg ai';
+        const bubble = document.createElement('div'); bubble.className = 'bubble';
+        msgDiv.appendChild(bubble);
+        document.getElementById('messages').appendChild(msgDiv);
+        scrollBottom();
+        document.getElementById('welcomeBox').style.display = 'none';
 
-            let index = 0;
-            const textNode = document.createTextNode('');
-            const cursorSpan = document.createElement('span'); cursorSpan.className = 'streaming-cursor';
-            bubble.appendChild(textNode); bubble.appendChild(cursorSpan);
+        let index = 0;
+        const textNode = document.createTextNode('');
+        const cursor = document.createElement('span');
+        cursor.className = 'streaming-cursor';
+        bubble.appendChild(textNode);
+        bubble.appendChild(cursor);
 
-            const interval = setInterval(() => {
-                if (index < fullText.length) {
-                    textNode.textContent += fullText.charAt(index);
-                    index++; scrollBottom();
-                } else {
-                    clearInterval(interval);
-                    cursorSpan.remove();
-                    bubble.innerHTML = formatMsg(fullText);
-                    document.querySelectorAll('.code-body code').forEach(b => hljs.highlightElement(b));
-                    conv.messages.push({ role: 'ai', content: fullText });
-                    saveConvs();
-                    state.isTyping = false;
-                    resolve();
-                }
-            }, 15);
-        });
+        const interval = setInterval(() => {
+            if (index < fullText.length) {
+                textNode.textContent += fullText.charAt(index);
+                index++;
+                scrollBottom();
+            } else {
+                clearInterval(interval);
+                cursor.remove();
+                bubble.innerHTML = formatMsg(fullText);
+                document.querySelectorAll('.code-body code').forEach(b => hljs.highlightElement(b));
+            }
+        }, 15);
     }
 
     async function getAI(prompt) {
         const model = state.models.find(m => m.id === state.currentModel);
         const conv = getConv();
-        const systemMsg = { role: 'system', content: model.systemPrompt };
-        const messages = [systemMsg, ...conv.messages.slice(-6).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })), { role: 'user', content: prompt }];
+        const sys = { role: 'system', content: model.prompt };
+        const msgs = [sys, ...conv.messages.slice(-6).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })), { role: 'user', content: prompt }];
         if (model.provider === 'groq') {
-            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST', headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model: model.modelName, messages, temperature: 0.3 })
-            });
-            if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || res.status); }
-            const data = await res.json();
-            if (!data.choices || !data.choices.length) throw new Error('رد غير متوقع من النموذج');
-            return data.choices[0].message.content;
+            const r = await fetch('https://api.groq.com/openai/v1/chat/completions', { method: 'POST', headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: model.modelName, messages: msgs, temperature: 0.3, max_tokens: 4096 }) });
+            if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || r.status); }
+            const d = await r.json();
+            return d.choices[0].message.content;
         } else {
-            const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                method: 'POST', headers: { 'Authorization': `Bearer ${OR_KEY}`, 'Content-Type': 'application/json', 'HTTP-Referer': location.href, 'X-Title': 'Sonic Flash' },
-                body: JSON.stringify({ model: model.modelName, messages })
-            });
-            if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || res.status); }
-            const data = await res.json();
-            if (!data.choices || !data.choices.length) throw new Error('النموذج لم يقدم رداً');
-            return data.choices[0].message.content;
+            const apiKey = model.key || OR_KEY;
+            const maxTokens = model.maxTokens || 4096;
+            const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'HTTP-Referer': location.href, 'X-Title': 'Sonic Flash' }, body: JSON.stringify({ model: model.modelName, messages: msgs, max_tokens: maxTokens }) });
+            if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || r.status); }
+            const d = await r.json();
+            return d.choices[0].message.content;
         }
     }
 
@@ -672,10 +735,10 @@
         document.querySelectorAll('.code-body code').forEach(b => hljs.highlightElement(b));
         scrollBottom();
     }
-    function formatMsg(t) { return t.replace(/```(\w+)?\n([\s\S]*?)```/g, (_,lang,code)=>`<div class="code-container"><div class="code-header"><span class="code-lang">${lang||'text'}</span><div class="code-actions"><button class="code-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>${lang==='html'?'<button class="code-btn run-btn" onclick="runHtml(this)"><i class="fas fa-play"></i> تشغيل</button>':''}</div></div><div class="code-body"><pre><code class="language-${lang||'text'}">${escapeHtml(code.trim())}</code></pre></div></div>`).replace(/\n/g,'<br>'); }
+    function formatMsg(t) { return t.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => `<div class="code-container"><div class="code-header"><span>${lang || 'text'}</span><div class="code-actions"><button class="code-btn" onclick="copyCode(this)">نسخ</button>${lang === 'html' ? '<button class="code-btn run-btn" onclick="runHtml(this)">تشغيل</button>' : ''}</div></div><div class="code-body"><pre><code>${escapeHtml(code.trim())}</code></pre></div></div>`).replace(/\n/g, '<br>'); }
     function copyCode(btn) { navigator.clipboard.writeText(btn.closest('.code-container').querySelector('code').innerText).then(() => showToast('تم النسخ!')); }
     function runHtml(btn) { const w = window.open('', '_blank'); w.document.write(btn.closest('.code-container').querySelector('code').innerText); w.document.close(); }
-    function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('show'); updateSidebarHistory(); }
     function closeAll() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); closeAdminModal(); closeSettingsModal(); }
@@ -688,13 +751,13 @@
     function openModelPopup() { document.getElementById('modelPopupOverlay').classList.add('show'); }
     function closeModelPopup() { document.getElementById('modelPopupOverlay').classList.remove('show'); }
 
-    checkTokenReset();
+    checkReset();
     renderModels();
     selectModel(state.currentModel, false);
     updateTokenUI();
     if (conversations.length) loadConv(conversations[0].id);
     updateSidebarHistory();
-    setInterval(() => { checkTokenReset(); updateTokenUI(); }, 60000);
+    setInterval(() => { checkReset(); updateTokenUI(); }, 60000);
 </script>
 </body>
 </html>
