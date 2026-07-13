@@ -12,7 +12,6 @@
     <style>
         :root {
             --safe-bottom: env(safe-area-inset-bottom, 0px);
-            --safe-top: env(safe-area-inset-top, 0px);
             --bg: #0B0D12; --bg2: #11141B; --surface: #171B23; --card: #1D212B;
             --border: rgba(255,255,255,0.07); --primary: #4D7CFF;
             --text: #FFFFFF; --text2: #A6ADBB; --text3: #727988;
@@ -62,13 +61,6 @@
         #modelModalOverlay.open, #usageModalOverlay.open, #adminModalOverlay.open { opacity: 1; pointer-events: auto; }
         .modal-container { width: 100%; max-width: 480px; max-height: 85vh; background: var(--card); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow-y: auto; padding: 24px 20px; transform: translateY(20px) scale(0.96); transition: transform 0.28s ease; }
         .modal-overlay.open .modal-container { transform: translateY(0) scale(1); }
-        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
-        .stat-value { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
-        .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; }
-        .progress-bar-bg { height: 6px; background: rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
-
-        /* تنسيقات اختيار النماذج المحسنة */
         .model-card-simple { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 6px; border-radius: 16px; cursor: pointer; transition: all 0.18s; border: 1.5px solid transparent; background: var(--surface); }
         .model-card-simple:hover { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); }
         .model-card-simple:active { transform: scale(0.985); }
@@ -85,23 +77,12 @@
         .reasoning-pill .pill-label { font-size: 13px; font-weight: 700; }
         .reasoning-pill .pill-desc { font-size: 9px; font-weight: 400; opacity: 0.7; margin-top: 2px; }
         .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin: 14px 0 8px; opacity: 0.7; }
-
-        /* زر نسخ الكود */
-        .copy-code-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            border: 1px solid rgba(77,124,255,0.3);
-            background: rgba(77,124,255,0.08);
-            color: #4D7CFF;
-            transition: all 0.2s;
-            margin-top: 6px;
-        }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .stat-value { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+        .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; }
+        .progress-bar-bg { height: 6px; background: rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+        .copy-code-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 600; cursor: pointer; border: 1px solid rgba(77,124,255,0.3); background: rgba(77,124,255,0.08); color: #4D7CFF; transition: all 0.2s; margin-top: 6px; }
         .copy-code-btn:hover { background: rgba(77,124,255,0.15); }
     </style>
 </head>
@@ -132,7 +113,7 @@
         </div>
     </main>
 
-    <!-- Model Modal (تصميم محسن) -->
+    <!-- Model Modal -->
     <div id="modelModalOverlay" onclick="if(event.target===this)closeModelModal()"><div class="modal-container" style="max-width:420px;"><div class="flex justify-between mb-4"><h2 class="text-lg font-bold">النموذج وقوة التفكير</h2><button onclick="closeModelModal()" style="color:var(--text3)"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="section-label">النموذج</div><div class="model-card-simple selected" id="modelCardUltra" onclick="selectModelInModal('sonic-ultra-x1')"><div class="model-dot ultra"></div><div class="model-name-simple">Sonic Ultra X1</div><span class="model-tag-simple tag-advanced">متقدم</span></div><div class="model-card-simple" id="modelCardFlash" onclick="selectModelInModal('sonic-flash')"><div class="model-dot flash"></div><div class="model-name-simple">Sonic Flash</div><span class="model-tag-simple tag-fast">سريع</span></div><div class="section-label">قوة التفكير</div><div class="flex gap-2"><div class="reasoning-pill selected" id="reasoningLow" onclick="selectReasoning('low')"><i data-lucide="zap" class="w-4 h-4"></i><span class="pill-label">Low</span><span class="pill-desc">سريع جداً</span></div><div class="reasoning-pill" id="reasoningHigh" onclick="selectReasoning('high')"><i data-lucide="sliders" class="w-4 h-4"></i><span class="pill-label">High</span><span class="pill-desc">متوازن</span></div><div class="reasoning-pill" id="reasoningMax" onclick="selectReasoning('max')"><i data-lucide="sparkles" class="w-4 h-4"></i><span class="pill-label">Max</span><span class="pill-desc">أقصى قوة</span></div></div></div></div>
 
     <!-- Usage Details Modal -->
@@ -147,9 +128,10 @@
         <button onclick="removeAdminTokens()" class="btn" style="background:var(--error);color:#fff;padding:12px 16px;border-radius:12px;white-space:nowrap;">خصم</button>
     </div>
     <div class="section-label">المستخدمين المتصلين</div>
+    <button onclick="refreshUserList()" style="background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:8px;">تحديث القائمة</button>
     <div id="adminUserList" class="space-y-2"></div></div></div>
 
-    <!-- Settings (بدون تسجيل خروج) -->
+    <!-- Settings -->
     <div id="settingsPanel" class="hidden" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px)" onclick="if(event.target===this)closeSettings()"><div class="modal-container" style="max-width:380px;"><div class="flex justify-between mb-4"><h2 class="text-lg font-bold">الإعدادات</h2><button onclick="closeSettings()" style="color:var(--text3)"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="space-y-3"><div class="p-3 rounded-xl flex justify-between items-center" style="background:var(--surface)"><span>الوضع الليلي</span><button onclick="toggleTheme()" class="w-10 h-5 rounded-full relative" style="background:var(--primary)"><div class="w-3.5 h-3.5 bg-white rounded-full absolute top-0.5 transition-all" id="settingsKnob" style="right:2px"></div></button></div><div class="p-3 rounded-xl" style="background:var(--surface)"><span>اللغة</span><select class="w-full mt-1.5 p-2 rounded-lg text-sm" style="background:var(--bg);border:1px solid var(--border)"><option>العربية</option><option>English</option></select></div></div></div></div>
 </div>
 
@@ -179,13 +161,14 @@
         messageLog: []
     };
 
-    // MQTT functions (unchanged)
+    // ========== MQTT ==========
     function connectMQTT() {
         if (!state.user) return;
         if (state.mqttClient) state.mqttClient.end();
         const clientId = 'sonic_' + state.user.firstName + '_' + state.user.lastName + '_' + Math.random().toString(16).slice(2, 8);
         const client = mqtt.connect(MQTT_BROKER, { clientId, clean: true, connectTimeout: 4000, reconnectPeriod: 1000 });
         client.on('connect', () => {
+            console.log('✅ MQTT متصل');
             client.subscribe(MQTT_TOPIC_PREFIX + 'admin/commands');
             client.subscribe(MQTT_TOPIC_PREFIX + 'presence');
             const presenceMsg = JSON.stringify({ firstName: state.user.firstName, lastName: state.user.lastName, isAdmin: state.isAdmin, timestamp: Date.now() });
@@ -199,6 +182,7 @@
                 else if (topic === MQTT_TOPIC_PREFIX + 'presence') handlePresence(payload);
             } catch (e) {}
         });
+        client.on('error', (err) => { console.error('MQTT Error:', err); });
         state.mqttClient = client;
     }
 
@@ -228,18 +212,57 @@
     }
 
     function adminSendTokens(targetKey, amount) {
-        if (!state.mqttClient || !state.isAdmin || !amount) return;
-        const msg = JSON.stringify({ action: 'add_tokens', target: targetKey, amount: amount });
-        state.mqttClient.publish(MQTT_TOPIC_PREFIX + 'admin/commands', msg);
+        if (!state.isAdmin || !amount) return;
+        // محاولة إرسال عبر MQTT
+        if (state.mqttClient && state.mqttClient.connected) {
+            const msg = JSON.stringify({ action: 'add_tokens', target: targetKey, amount: amount });
+            state.mqttClient.publish(MQTT_TOPIC_PREFIX + 'admin/commands', msg);
+        }
+        // حل احتياطي: التعديل مباشرة على localStorage للمستخدم المستهدف
+        const userKey = 'sonic_user_' + targetKey;
+        const saved = localStorage.getItem(userKey);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                data.tokensUsed = Math.max(0, (data.tokensUsed || 0) - amount);
+                localStorage.setItem(userKey, JSON.stringify(data));
+                // إذا كان المستخدم المستهدف هو الحالي، حدث الواجهة
+                if (state.user && targetKey === state.user.firstName + '_' + state.user.lastName) {
+                    state.tokensUsed = data.tokensUsed;
+                    updateUI();
+                }
+            } catch(e) {}
+        }
     }
 
     function adminRemoveTokens(targetKey, amount) {
-        if (!state.mqttClient || !state.isAdmin || !amount) return;
-        const msg = JSON.stringify({ action: 'remove_tokens', target: targetKey, amount: amount });
-        state.mqttClient.publish(MQTT_TOPIC_PREFIX + 'admin/commands', msg);
+        if (!state.isAdmin || !amount) return;
+        if (state.mqttClient && state.mqttClient.connected) {
+            const msg = JSON.stringify({ action: 'remove_tokens', target: targetKey, amount: amount });
+            state.mqttClient.publish(MQTT_TOPIC_PREFIX + 'admin/commands', msg);
+        }
+        const userKey = 'sonic_user_' + targetKey;
+        const saved = localStorage.getItem(userKey);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                data.tokensUsed = (data.tokensUsed || 0) + amount;
+                localStorage.setItem(userKey, JSON.stringify(data));
+                if (state.user && targetKey === state.user.firstName + '_' + state.user.lastName) {
+                    state.tokensUsed = data.tokensUsed;
+                    updateUI();
+                }
+            } catch(e) {}
+        }
     }
 
-    // User management (logout removed)
+    function refreshUserList() {
+        if (state.mqttClient && state.mqttClient.connected) {
+            state.mqttClient.publish(MQTT_TOPIC_PREFIX + 'request_users', 'ping');
+        }
+    }
+
+    // ========== USER MANAGEMENT ==========
     function getUserKey(user) { return 'sonic_user_' + (user ? user.firstName + '_' + user.lastName : ''); }
     function saveUserData() {
         if (!state.user) return;
@@ -298,16 +321,25 @@
         document.querySelectorAll('#profileAvatar').forEach(a => a.textContent = initial);
     }
 
-    // Admin functions (unchanged)
+    // ========== ADMIN ==========
     function openAdminPanel() { document.getElementById('adminModalOverlay').classList.add('open'); renderAdminUserList(); }
     function closeAdminPanel() { document.getElementById('adminModalOverlay').classList.remove('open'); }
     function addAdminTokens() {
         const val = parseInt(document.getElementById('adminAddTokens').value);
-        if (!isNaN(val) && val > 0) { state.tokensUsed = Math.max(0, state.tokensUsed - val); updateUI(); saveUserData(); document.getElementById('adminAddTokens').value = ''; }
+        if (!isNaN(val) && val > 0) {
+            state.tokensUsed = Math.max(0, state.tokensUsed - val);
+            updateUI(); saveUserData();
+            document.getElementById('adminAddTokens').value = '';
+            console.log('تمت إضافة', val, 'نقطة. الرصيد المستخدم الآن:', state.tokensUsed);
+        }
     }
     function removeAdminTokens() {
         const val = parseInt(document.getElementById('adminAddTokens').value);
-        if (!isNaN(val) && val > 0) { state.tokensUsed = state.tokensUsed + val; updateUI(); saveUserData(); document.getElementById('adminAddTokens').value = ''; }
+        if (!isNaN(val) && val > 0) {
+            state.tokensUsed = state.tokensUsed + val;
+            updateUI(); saveUserData();
+            document.getElementById('adminAddTokens').value = '';
+        }
     }
     function renderAdminUserList() {
         const list = document.getElementById('adminUserList');
@@ -323,7 +355,7 @@
         `).join('');
     }
 
-    // Usage modal (unchanged)
+    // ========== USAGE MODAL ==========
     function openUsageModal() { document.getElementById('usageModalOverlay').classList.add('open'); renderUsageDetails(); }
     function closeUsageModal() { document.getElementById('usageModalOverlay').classList.remove('open'); }
     function renderUsageDetails() {
@@ -346,7 +378,7 @@
         `).join('');
     }
 
-    // Core functions (unchanged)
+    // ========== CORE LOGIC ==========
     function checkTokenReset() { const today = new Date().toISOString().split('T')[0]; if (state.lastReset !== today) { state.tokensUsed = 0; state.lastReset = today; state.messageLog = []; saveUserData(); } }
     function tokenCost(len) { const m = API_CONFIG.models[state.model]; const r = REASONING[state.reasoning]; return Math.ceil(len * (m?.baseTokenMul || 8) * (r?.tokenMul || 1)); }
     function isLimitReached() { checkTokenReset(); return state.isAdmin ? false : state.tokensUsed >= DAILY_LIMIT; }
@@ -377,8 +409,6 @@
     function selectConversation(id) { const conv = state.conversations.find(c => c.id === id); if (!conv) return; state.activeId = id; document.getElementById('homeScreen').style.display = 'none'; document.getElementById('chatArea').classList.remove('hidden'); document.getElementById('headerTitle').textContent = conv.title; renderMessages(conv); renderConversations(); saveUserData(); if (window.innerWidth < 768) closeSidebar(); scrollToBottom(); }
     function formatContent(text) { return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/```(\w*)\n([\s\S]*?)```/g, (m,l,c) => `<pre><code>${c.trim()}</code></pre>`).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>'); }
     function hasCodeBlocks(text) { return /```[\s\S]*?```/.test(text); }
-
-    // نسخ الكود (يعمل بشكل صحيح)
     function addCopyButtons(container, text) {
         const regex = /```(\w*)\n([\s\S]*?)```/g;
         let match;
