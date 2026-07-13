@@ -88,53 +88,26 @@
 </head>
 <body class="dark">
 <div id="app">
-    <!-- Login Overlay -->
     <div id="loginOverlay"><div class="login-card"><div class="text-center mb-6"><svg width="40" height="40" viewBox="0 0 32 32" fill="none"><path d="M4 16C4 8 8 4 16 4c8 0 12 4 12 12 0 4-2 7-6 9" stroke="#4D7CFF" stroke-width="2.5"/><circle cx="24" cy="10" r="3" fill="#4D7CFF" opacity="0.8"/></svg><h2 class="text-xl font-bold mb-1">مرحباً بك في Sonic</h2></div><div class="space-y-3"><input type="text" id="firstName" class="login-input" placeholder="الاسم الأول"><input type="text" id="lastName" class="login-input" placeholder="الاسم الأخير"><input type="password" id="password" class="login-input" placeholder="كلمة المرور"><button onclick="registerUser()" class="w-full py-3 rounded-xl font-semibold text-sm mt-2" style="background:var(--primary);color:#fff;border:none;border-radius:14px">إنشاء الحساب</button></div><p id="loginError" class="text-xs text-center mt-3 hidden" style="color:#FF4D4F;"></p></div></div>
-
-    <!-- Sidebar Overlay -->
     <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
-
-    <!-- Sidebar -->
     <aside id="sidebar"><div class="flex flex-col h-full overflow-hidden"><div class="flex items-center gap-2 mb-3 px-1"><button onclick="closeSidebar()" class="md:hidden p-1.5 rounded-full" style="color:var(--text2)"><i data-lucide="x" class="w-4 h-4"></i></button><div class="flex items-center gap-2 cursor-pointer" onclick="goHome()"><svg width="22" height="22" viewBox="0 0 32 32"><path d="M4 16C4 8 8 4 16 4c8 0 12 4 12 12 0 4-2 7-6 9" stroke="#4D7CFF" stroke-width="2.5"/><circle cx="24" cy="10" r="3" fill="#4D7CFF" opacity="0.8"/></svg><span class="text-sm font-semibold">Sonic</span></div></div><button onclick="newChat()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl mb-2 text-xs font-medium" style="background:var(--primary);color:#fff;border-radius:12px"><i data-lucide="plus" class="w-3.5 h-3.5"></i>محادثة جديدة</button>
     <button id="adminPanelBtn" onclick="openAdminPanel()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl mb-2 text-xs font-medium hidden" style="background:#F5A524;color:#000;border-radius:12px"><i data-lucide="shield" class="w-3.5 h-3.5"></i>لوحة الأدمن</button>
     <div class="flex-1 overflow-y-auto" id="convListContainer"><div id="conversationList"></div></div><div class="flex-shrink-0 pt-2 border-t" style="border-color:var(--border)"><div class="px-2 py-2 mb-1.5 rounded-xl cursor-pointer" style="background:var(--surface);border:1px solid var(--border);border-radius:10px" onclick="openUsageModal()"><div class="flex justify-between"><span class="text-[9px]" style="color:var(--text2);">الاستخدام</span><span class="text-[9px]" id="usagePercent">0%</span></div><div class="h-1.5 rounded-full bg-white/5 mt-1.5"><div class="h-full rounded-full" id="usageBar" style="width:0%;background:var(--primary);transition:width 0.5s"></div></div></div><div class="flex items-center gap-1 mt-2"><button onclick="openSettings()" class="p-1.5 rounded-lg flex items-center gap-1.5" style="color:var(--text2)"><i data-lucide="settings" class="w-3 h-3"></i></button><button onclick="toggleTheme()" class="p-1.5 rounded-lg" id="themeToggle"><i data-lucide="sun" class="w-3 h-3"></i></button><div class="avatar-circle" id="profileAvatar">S</div></div></div></div></aside>
-
-    <!-- Main Content -->
     <main>
         <header id="mainHeader"><div class="flex items-center justify-between px-3 py-2 rounded-2xl glass" style="background:color-mix(in srgb, var(--surface) 70%, transparent);border:1px solid var(--border);border-radius:18px"><button onclick="toggleSidebar()" class="p-1.5 rounded-full" style="color:var(--text2)"><i data-lucide="menu" class="w-4 h-4"></i></button><h2 class="text-sm font-medium" id="headerTitle">محادثة جديدة</h2></div></header>
-        <div id="contentArea">
-            <div id="homeScreen" class="flex flex-col items-center justify-center min-h-full py-6"><div class="mb-5"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,rgba(77,124,255,0.15),rgba(108,149,255,0.06));border:1px solid rgba(77,124,255,0.2);border-radius:22px"><svg width="30" height="30" viewBox="0 0 32 32"><path d="M4 16C4 8 8 4 16 4c8 0 12 4 12 12 0 4-2 7-6 9" stroke="#4D7CFF" stroke-width="2.5"/><circle cx="24" cy="10" r="3" fill="#4D7CFF" opacity="0.8"/></svg></div></div><h1 class="text-xl md:text-3xl font-bold text-center mb-1">كيف يمكنني مساعدتك اليوم؟</h1><div class="suggestion-grid px-1"><div class="p-3 rounded-2xl cursor-pointer" style="background:var(--card);border:1px solid var(--border);border-radius:16px" onclick="quickPrompt('أنشئ موقع ويب')"><i data-lucide="globe" class="w-3.5 h-3.5" style="color:#4D7CFF"></i><h3 class="text-[11px]">موقع ويب</h3></div><div class="p-3 rounded-2xl cursor-pointer" style="background:var(--card);border:1px solid var(--border);border-radius:16px" onclick="quickPrompt('اكتب كود بايثون')"><i data-lucide="code-2" class="w-3.5 h-3.5" style="color:#34C759"></i><h3 class="text-[11px]">كود</h3></div><div class="p-3 rounded-2xl cursor-pointer" style="background:var(--card);border:1px solid var(--border);border-radius:16px" onclick="quickPrompt('اشرح الحوسبة الكمومية')"><i data-lucide="lightbulb" class="w-3.5 h-3.5" style="color:#F5A524"></i><h3 class="text-[11px]">شرح</h3></div></div></div>
-            <div id="chatArea" class="hidden flex-col space-y-4 min-h-full"><div id="messagesContainer" class="space-y-4"></div><div id="typingIndicator" class="hidden flex items-center gap-1 px-4"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>
-        </div>
-        <div id="composerContainer">
-            <div class="flex justify-center mb-1.5"><button onclick="openModelModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-medium" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text2)"><i data-lucide="cpu" class="w-3 h-3" style="color:var(--primary)"></i><span id="currentModelName">Sonic Ultra X1</span><span style="color:var(--primary);font-weight:600" id="currentReasoningLabel">· High</span></button></div>
-            <div id="tokenLimitWarning" class="hidden text-center mb-2"><span class="text-[10px] px-3 py-1 rounded-full" style="background:rgba(255,77,79,0.15);color:#FF4D4F">الرصيد منتهي</span></div>
-            <div class="relative max-w-2xl mx-auto"><div class="rounded-2xl p-1.5 glass" style="background:color-mix(in srgb, var(--surface) 78%, transparent);border:1px solid var(--border);border-radius:20px"><div class="flex items-end gap-1 px-1"><textarea id="composerInput" rows="1" placeholder="اكتب رسالتك…" class="flex-1 resize-none bg-transparent py-2 px-1 outline-none text-sm" style="color:var(--text)" oninput="autoResize(this)" onkeydown="handleComposerKey(event)"></textarea><button id="sendButton" onclick="sendMessage()" class="p-2 rounded-xl flex-shrink-0" style="background:var(--primary);color:#fff;border-radius:14px"><i data-lucide="arrow-up" class="w-4 h-4"></i></button></div></div></div>
-        </div>
+        <div id="contentArea"><div id="homeScreen" class="flex flex-col items-center justify-center min-h-full py-6"><div class="mb-5"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,rgba(77,124,255,0.15),rgba(108,149,255,0.06));border:1px solid rgba(77,124,255,0.2);border-radius:22px"><svg width="30" height="30" viewBox="0 0 32 32"><path d="M4 16C4 8 8 4 16 4c8 0 12 4 12 12 0 4-2 7-6 9" stroke="#4D7CFF" stroke-width="2.5"/><circle cx="24" cy="10" r="3" fill="#4D7CFF" opacity="0.8"/></svg></div></div><h1 class="text-xl md:text-3xl font-bold text-center mb-1">كيف يمكنني مساعدتك اليوم؟</h1><div class="suggestion-grid px-1"><div class="p-3 rounded-2xl cursor-pointer" style="background:var(--card);border:1px solid var(--border);border-radius:16px" onclick="quickPrompt('أنشئ موقع ويب')"><i data-lucide="globe" class="w-3.5 h-3.5" style="color:#4D7CFF"></i><h3 class="text-[11px]">موقع ويب</h3></div><div class="p-3 rounded-2xl cursor-pointer" style="background:var(--card);border:1px solid var(--border);border-radius:16px" onclick="quickPrompt('اكتب كود بايثون')"><i data-lucide="code-2" class="w-3.5 h-3.5" style="color:#34C759"></i><h3 class="text-[11px]">كود</h3></div><div class="p-3 rounded-2xl cursor-pointer" style="background:var(--card);border:1px solid var(--border);border-radius:16px" onclick="quickPrompt('اشرح الحوسبة الكمومية')"><i data-lucide="lightbulb" class="w-3.5 h-3.5" style="color:#F5A524"></i><h3 class="text-[11px]">شرح</h3></div></div></div><div id="chatArea" class="hidden flex-col space-y-4 min-h-full"><div id="messagesContainer" class="space-y-4"></div><div id="typingIndicator" class="hidden flex items-center gap-1 px-4"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div></div>
+        <div id="composerContainer"><div class="flex justify-center mb-1.5"><button onclick="openModelModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-medium" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text2)"><i data-lucide="cpu" class="w-3 h-3" style="color:var(--primary)"></i><span id="currentModelName">Sonic Ultra X1</span><span style="color:var(--primary);font-weight:600" id="currentReasoningLabel">· High</span></button></div><div id="tokenLimitWarning" class="hidden text-center mb-2"><span class="text-[10px] px-3 py-1 rounded-full" style="background:rgba(255,77,79,0.15);color:#FF4D4F">الرصيد منتهي</span></div><div class="relative max-w-2xl mx-auto"><div class="rounded-2xl p-1.5 glass" style="background:color-mix(in srgb, var(--surface) 78%, transparent);border:1px solid var(--border);border-radius:20px"><div class="flex items-end gap-1 px-1"><textarea id="composerInput" rows="1" placeholder="اكتب رسالتك…" class="flex-1 resize-none bg-transparent py-2 px-1 outline-none text-sm" style="color:var(--text)" oninput="autoResize(this)" onkeydown="handleComposerKey(event)"></textarea><button id="sendButton" onclick="sendMessage()" class="p-2 rounded-xl flex-shrink-0" style="background:var(--primary);color:#fff;border-radius:14px"><i data-lucide="arrow-up" class="w-4 h-4"></i></button></div></div></div></div>
     </main>
-
-    <!-- Model Modal -->
     <div id="modelModalOverlay" onclick="if(event.target===this)closeModelModal()"><div class="modal-container" style="max-width:420px;"><div class="flex justify-between mb-4"><h2 class="text-lg font-bold">النموذج وقوة التفكير</h2><button onclick="closeModelModal()" style="color:var(--text3)"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="section-label">النموذج</div><div class="model-card-simple selected" id="modelCardUltra" onclick="selectModelInModal('sonic-ultra-x1')"><div class="model-dot ultra"></div><div class="model-name-simple">Sonic Ultra X1</div><span class="model-tag-simple tag-advanced">متقدم</span></div><div class="model-card-simple" id="modelCardFlash" onclick="selectModelInModal('sonic-flash')"><div class="model-dot flash"></div><div class="model-name-simple">Sonic Flash</div><span class="model-tag-simple tag-fast">سريع</span></div><div class="section-label">قوة التفكير</div><div class="flex gap-2"><div class="reasoning-pill selected" id="reasoningLow" onclick="selectReasoning('low')"><i data-lucide="zap" class="w-4 h-4"></i><span class="pill-label">Low</span><span class="pill-desc">سريع جداً</span></div><div class="reasoning-pill" id="reasoningHigh" onclick="selectReasoning('high')"><i data-lucide="sliders" class="w-4 h-4"></i><span class="pill-label">High</span><span class="pill-desc">متوازن</span></div><div class="reasoning-pill" id="reasoningMax" onclick="selectReasoning('max')"><i data-lucide="sparkles" class="w-4 h-4"></i><span class="pill-label">Max</span><span class="pill-desc">أقصى قوة</span></div></div></div></div>
-
-    <!-- Usage Details Modal -->
     <div id="usageModalOverlay" onclick="if(event.target===this)closeUsageModal()"><div class="modal-container"><div class="flex justify-between mb-5"><h2 class="text-lg font-bold">تفاصيل الاستهلاك</h2><button onclick="closeUsageModal()" style="color:var(--text3)"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="stat-card mb-3"><div><span class="stat-label">الرصيد المتبقي</span><div class="stat-value" id="detailRemaining">0</div></div><div class="progress-bar-bg" style="width:120px;"><div class="progress-bar-fill" id="detailProgress" style="width:0%;background:var(--primary);"></div></div></div><div class="stat-card mb-3"><span class="stat-label">إجمالي المستهلك اليوم</span><span class="stat-value" id="detailUsed">0</span></div><div class="stat-card mb-3"><span class="stat-label">الحد اليومي</span><span class="stat-value" id="detailLimit">10,000</span></div><div class="section-label" style="margin-top:8px;">آخر الرسائل</div><div id="recentMessages" class="space-y-2 max-h-48 overflow-y-auto"></div></div></div>
-
-    <!-- Admin Modal -->
     <div id="adminModalOverlay" onclick="if(event.target===this)closeAdminPanel()"><div class="modal-container"><div class="flex justify-between mb-4"><h2 class="text-lg font-bold">لوحة الأدمن</h2><button onclick="closeAdminPanel()" style="color:var(--text3)"><i data-lucide="x" class="w-5 h-5"></i></button></div>
     <div class="section-label">تعديل رصيدي</div>
-    <div class="flex items-center gap-2 mb-3">
-        <input type="number" id="adminAddTokens" class="login-input" placeholder="كمية النقاط" style="margin-bottom:0;">
-        <button onclick="addAdminTokens()" class="btn" style="background:var(--primary);color:#fff;padding:12px 16px;border-radius:12px;white-space:nowrap;">إضافة</button>
-        <button onclick="removeAdminTokens()" class="btn" style="background:var(--error);color:#fff;padding:12px 16px;border-radius:12px;white-space:nowrap;">خصم</button>
-    </div>
+    <div class="flex items-center gap-2 mb-3"><input type="number" id="adminAddTokens" class="login-input" placeholder="كمية النقاط" style="margin-bottom:0;"><button onclick="addAdminTokens()" style="background:var(--primary);color:#fff;padding:12px 16px;border-radius:12px;white-space:nowrap;">إضافة</button><button onclick="removeAdminTokens()" style="background:var(--error);color:#fff;padding:12px 16px;border-radius:12px;white-space:nowrap;">خصم</button></div>
     <div class="section-label">المستخدمين المتصلين</div>
     <button onclick="refreshUserList()" style="background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:8px;">تحديث القائمة</button>
     <div id="adminUserList" class="space-y-2"></div></div></div>
-
-    <!-- Settings -->
     <div id="settingsPanel" class="hidden" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px)" onclick="if(event.target===this)closeSettings()"><div class="modal-container" style="max-width:380px;"><div class="flex justify-between mb-4"><h2 class="text-lg font-bold">الإعدادات</h2><button onclick="closeSettings()" style="color:var(--text3)"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="space-y-3"><div class="p-3 rounded-xl flex justify-between items-center" style="background:var(--surface)"><span>الوضع الليلي</span><button onclick="toggleTheme()" class="w-10 h-5 rounded-full relative" style="background:var(--primary)"><div class="w-3.5 h-3.5 bg-white rounded-full absolute top-0.5 transition-all" id="settingsKnob" style="right:2px"></div></button></div><div class="p-3 rounded-xl" style="background:var(--surface)"><span>اللغة</span><select class="w-full mt-1.5 p-2 rounded-lg text-sm" style="background:var(--bg);border:1px solid var(--border)"><option>العربية</option><option>English</option></select></div></div></div></div>
 </div>
-
 <script>
     const API_CONFIG = {
         base: { 'sonic-ultra-x1': 'https://zenmux.ai/api/v1', 'sonic-flash': 'https://api.groq.com/openai/v1' },
@@ -161,10 +134,10 @@
         messageLog: []
     };
 
-    // ========== MQTT ==========
+    // ========== MQTT (FIXED) ==========
     function connectMQTT() {
         if (!state.user) return;
-        if (state.mqttClient) state.mqttClient.end();
+        if (state.mqttClient) { try { state.mqttClient.end(); } catch(e) {} }
         const clientId = 'sonic_' + state.user.firstName + '_' + state.user.lastName + '_' + Math.random().toString(16).slice(2, 8);
         const client = mqtt.connect(MQTT_BROKER, { clientId, clean: true, connectTimeout: 4000, reconnectPeriod: 1000 });
         client.on('connect', () => {
@@ -178,8 +151,11 @@
         client.on('message', (topic, message) => {
             try {
                 const payload = JSON.parse(message.toString());
-                if (topic === MQTT_TOPIC_PREFIX + 'admin/commands') handleAdminCommand(payload);
-                else if (topic === MQTT_TOPIC_PREFIX + 'presence') handlePresence(payload);
+                if (topic === MQTT_TOPIC_PREFIX + 'admin/commands') {
+                    handleAdminCommand(payload);
+                } else if (topic === MQTT_TOPIC_PREFIX + 'presence') {
+                    handlePresence(payload);
+                }
             } catch (e) {}
         });
         client.on('error', (err) => { console.error('MQTT Error:', err); });
@@ -193,6 +169,7 @@
             if (payload.action === 'add_tokens') {
                 state.tokensUsed = Math.max(0, state.tokensUsed - (payload.amount || 0));
                 updateUI(); saveUserData();
+                console.log('📩 تم استلام ' + payload.amount + ' نقطة. الرصيد المستخدم الآن:', state.tokensUsed);
             } else if (payload.action === 'remove_tokens') {
                 state.tokensUsed = state.tokensUsed + (payload.amount || 0);
                 updateUI(); saveUserData();
@@ -213,12 +190,13 @@
 
     function adminSendTokens(targetKey, amount) {
         if (!state.isAdmin || !amount) return;
-        // محاولة إرسال عبر MQTT
+        // إرسال عبر MQTT
+        const msg = JSON.stringify({ action: 'add_tokens', target: targetKey, amount: amount });
         if (state.mqttClient && state.mqttClient.connected) {
-            const msg = JSON.stringify({ action: 'add_tokens', target: targetKey, amount: amount });
             state.mqttClient.publish(MQTT_TOPIC_PREFIX + 'admin/commands', msg);
+            console.log('📤 إرسال ' + amount + ' نقطة إلى ' + targetKey);
         }
-        // حل احتياطي: التعديل مباشرة على localStorage للمستخدم المستهدف
+        // تحديث محلي مباشر للمستخدم المستهدف
         const userKey = 'sonic_user_' + targetKey;
         const saved = localStorage.getItem(userKey);
         if (saved) {
@@ -226,7 +204,7 @@
                 const data = JSON.parse(saved);
                 data.tokensUsed = Math.max(0, (data.tokensUsed || 0) - amount);
                 localStorage.setItem(userKey, JSON.stringify(data));
-                // إذا كان المستخدم المستهدف هو الحالي، حدث الواجهة
+                // إذا كان المستخدم المستهدف هو الحالي
                 if (state.user && targetKey === state.user.firstName + '_' + state.user.lastName) {
                     state.tokensUsed = data.tokensUsed;
                     updateUI();
@@ -237,8 +215,8 @@
 
     function adminRemoveTokens(targetKey, amount) {
         if (!state.isAdmin || !amount) return;
+        const msg = JSON.stringify({ action: 'remove_tokens', target: targetKey, amount: amount });
         if (state.mqttClient && state.mqttClient.connected) {
-            const msg = JSON.stringify({ action: 'remove_tokens', target: targetKey, amount: amount });
             state.mqttClient.publish(MQTT_TOPIC_PREFIX + 'admin/commands', msg);
         }
         const userKey = 'sonic_user_' + targetKey;
@@ -321,7 +299,6 @@
         document.querySelectorAll('#profileAvatar').forEach(a => a.textContent = initial);
     }
 
-    // ========== ADMIN ==========
     function openAdminPanel() { document.getElementById('adminModalOverlay').classList.add('open'); renderAdminUserList(); }
     function closeAdminPanel() { document.getElementById('adminModalOverlay').classList.remove('open'); }
     function addAdminTokens() {
@@ -330,7 +307,6 @@
             state.tokensUsed = Math.max(0, state.tokensUsed - val);
             updateUI(); saveUserData();
             document.getElementById('adminAddTokens').value = '';
-            console.log('تمت إضافة', val, 'نقطة. الرصيد المستخدم الآن:', state.tokensUsed);
         }
     }
     function removeAdminTokens() {
@@ -355,7 +331,6 @@
         `).join('');
     }
 
-    // ========== USAGE MODAL ==========
     function openUsageModal() { document.getElementById('usageModalOverlay').classList.add('open'); renderUsageDetails(); }
     function closeUsageModal() { document.getElementById('usageModalOverlay').classList.remove('open'); }
     function renderUsageDetails() {
@@ -378,7 +353,6 @@
         `).join('');
     }
 
-    // ========== CORE LOGIC ==========
     function checkTokenReset() { const today = new Date().toISOString().split('T')[0]; if (state.lastReset !== today) { state.tokensUsed = 0; state.lastReset = today; state.messageLog = []; saveUserData(); } }
     function tokenCost(len) { const m = API_CONFIG.models[state.model]; const r = REASONING[state.reasoning]; return Math.ceil(len * (m?.baseTokenMul || 8) * (r?.tokenMul || 1)); }
     function isLimitReached() { checkTokenReset(); return state.isAdmin ? false : state.tokensUsed >= DAILY_LIMIT; }
@@ -427,7 +401,6 @@
         }
         lucide.createIcons();
     }
-
     function renderMessages(conv) { const container = document.getElementById('messagesContainer'); container.innerHTML = ''; conv.messages.forEach((msg, i) => { const div = document.createElement('div'); div.className = 'msg-anim flex ' + (msg.role === 'user' ? 'justify-end' : 'justify-start'); div.style.animationDelay = i * 0.03 + 's'; const isU = msg.role === 'user'; div.innerHTML = `<div class="max-w-[93%] sm:max-w-[78%] md:max-w-[68%]"><div class="px-3.5 py-2.5 rounded-2xl text-sm msg-content" style="${isU?'background:var(--primary);color:#fff;border-radius:18px 18px 6px 18px':'background:transparent;color:var(--text);border-radius:18px 18px 18px 6px;border:1px solid var(--border)'}">${formatContent(msg.content)}</div></div>`; container.appendChild(div); if (msg.role === 'assistant' && hasCodeBlocks(msg.content)) { const bubble = div.querySelector('.msg-content'); if (bubble) addCopyButtons(bubble.parentElement, msg.content); } }); lucide.createIcons(); scrollToBottom(); }
     function scrollToBottom() { document.getElementById('contentArea').scrollTop = document.getElementById('contentArea').scrollHeight; }
     function renderConversations() { const list = document.getElementById('convListContainer'); const active = state.conversations.filter(c => !c.archived); if (!active.length) { list.innerHTML = '<div class="text-center text-xs mt-4" style="color:var(--text3)">لا توجد محادثات</div>'; return; } const now = Date.now(); const groups = { 'اليوم':[], 'أمس':[], '7 أيام':[], 'أقدم':[] }; active.forEach(c => { const d = (now-c.updatedAt)/86400000; if(d<1)groups['اليوم'].push(c); else if(d<2)groups['أمس'].push(c); else if(d<7)groups['7 أيام'].push(c); else groups['أقدم'].push(c); }); let html = ''; for(const[g,convs] of Object.entries(groups)){ if(!convs.length) continue; html += `<div class="text-[8px] font-semibold uppercase px-2 py-1 mt-2" style="color:var(--text3)">${g}</div>`; convs.forEach(c => { html += `<div class="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-white/5 ${c.id===state.activeId?'border-r-2':''}" style="border-color:var(--primary);background:${c.id===state.activeId?'rgba(77,124,255,0.08)':'transparent'}" onclick="selectConversation('${c.id}')"><div class="flex-1 min-w-0"><div class="text-[10px] font-medium truncate">${c.title}</div><div class="text-[8px]" style="color:var(--text3)">${timeAgo(c.updatedAt)}</div></div><button class="opacity-0 hover:opacity-100 p-0.5 rounded" onclick="event.stopPropagation();deleteConv('${c.id}')" style="color:var(--text3)"><i data-lucide="trash-2" class="w-3 h-3"></i></button></div>`; }); } list.innerHTML = html; lucide.createIcons(); }
